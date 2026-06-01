@@ -1,10 +1,15 @@
 # Ignore build outputs from performing a nix-build or `nix build` command
 result
 result-*
+.luarc.json
 
 # Ignore automatically generated direnv output
 .direnv
+
+# Ignore agentic files
 .claude
+
+# MacOS
 .DS_Store
 
 # Ignore NixOS interactive test driver history
