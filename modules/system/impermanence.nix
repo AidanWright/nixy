@@ -1,4 +1,4 @@
-# modules/nix/tools/impermanence.nix
+# modules/system/impermanence.nix
 ################################################################################
 # Stub for future impermanence configuration.
 ################################################################################
