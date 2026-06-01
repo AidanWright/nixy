@@ -4,6 +4,8 @@ result-*
 
 # Ignore automatically generated direnv output
 .direnv
+.claude
+.DS_Store
 
 # Ignore NixOS interactive test driver history
 **/.nixos-test-history
