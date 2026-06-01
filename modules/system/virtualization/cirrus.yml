@@ -1,0 +1,11 @@
+task:
+  name: darwin-rebuild
+  tart_instance:
+    image: @imageRef@
+    user: admin
+    password: admin
+    cpu: @cores@
+    memory: @memoryMb@
+  apply_script:
+    - source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    - /run/current-system/sw/bin/darwin-rebuild switch --flake $CIRRUS_WORKING_DIR#@hostname@
