@@ -1,24 +1,21 @@
 # modules/nix/dendritic.nix
 ################################################################################
-# Set's up the basic project ecosystem using some of vic's libraries.
-# Because we use flake-file, we can use imports close to the code, not just here
+# Sets up the project ecosystem: flake-file manages inputs, nix-auto-follow
+# keeps dependency versions consistent across all inputs automatically.
 ################################################################################
 { inputs, lib, ... }:
 {
   imports = [
-    # See more: https://github.com/denful/flake-file/tree/main/modules/dendritic
     inputs.flake-file.flakeModules.dendritic
-    # See more: https://flake-file.denful.dev/guides/lock-flattening/
     inputs.flake-file.flakeModules.nix-auto-follow
   ];
 
   flake-file.inputs = {
-    # Currently, we build everything against stable and only Selectively pick
-    # packages from unstable.
+    # mkForce locks stable so no transitive input can silently upgrade nixpkgs.
     nixpkgs.url = lib.mkForce "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = lib.mkDefault "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin = {
-      # Version must match version of nixpkgs. i.e. if nixpkgs 25.11 then nix-darwin 25.11
+      # nix-darwin versioning tracks nixpkgs — nix-darwin-26.05 requires nixos-26.05.
       url = "https://flakehub.com/f/nix-darwin/nix-darwin/0.2605.2360";
       inputs.nixpkgs.follows = "nixpkgs";
     };

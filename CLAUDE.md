@@ -97,9 +97,10 @@ nix run --impure .#darwinConfigurations.<HOSTNAME>.config.system.build.tart-vm
     │   ├── determinate.nix
     │   ├── impermanence.nix
     │   ├── virtualization/
-    │   │   ├── _tart/                          # Helper files for the tart runner. Hidden by import-tree due to the _ prefix.
+    │   │   ├── cirrus.yml                      # Cirrus CI task template for the tart VM runner
     │   │   ├── nixos-shell.nix                 # nixos-shell runner for linux guests
-    │   │   └── tart.nix                        # tart runner for Darwin guests
+    │   │   ├── tart-base-image.nix             # builds and pushes the shared Tart base image
+    │   │   └── tart-vm.nix                     # per-host darwin module for running config in a VM
     └── users/                                  # Home-manager user settings
 ```
 

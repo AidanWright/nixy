@@ -1,5 +1,6 @@
 # modules/nix/flake-parts/lib.nix
 ################################################################################
+# Exports mkNixos, mkDarwin, and mkHomeManager helpers via flake.lib.
 # https://github.com/Doc-Steve/dendritic-design-with-flake-parts/blob/main/modules/nix/flake-parts%20%5B%5D/lib.nix#L25
 ################################################################################
 {
@@ -8,8 +9,6 @@
   ...
 }:
 {
-  # Helper functions for creating system / home-manager configurations
-
   options.flake.lib = lib.mkOption {
     type = lib.types.attrsOf lib.types.unspecified;
     default = { };

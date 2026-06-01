@@ -1,8 +1,7 @@
 # modules/nix/overlays/nixpkg-unstable.nix
 ################################################################################
-# creates overlay allows us to use pkgs.unstable.<pkg>
-# overlay still needs to be consumed to be accessible in system configurations
-# we do that in the flake-parts helper lib modules/nix/flake-parts/lib.nix
+# Creates an overlay that exposes pkgs.unstable.<pkg> across all configurations.
+# The overlay must be applied in each host's module list to take effect.
 ################################################################################
 { inputs, ... }:
 let

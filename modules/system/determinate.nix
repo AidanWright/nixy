@@ -1,7 +1,8 @@
 # modules/system/determinate.nix
 ################################################################################
+# Enables Determinate Nix for darwin and NixOS configurations.
 # See: https://docs.determinate.systems/guides/nix-darwin/
-# Also see: https://docs.determinate.systems/guides/advanced-installation/#nixos
+# See: https://docs.determinate.systems/guides/advanced-installation/#nixos
 ################################################################################
 { inputs, ... }:
 {
