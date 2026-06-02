@@ -9,6 +9,9 @@
 #
 # Build and push:
 #   nix run --impure .#tart-base-image
+#
+# After pushing, trigger the 'Publish Base Image' workflow to make the package
+# public. See .github/workflows/publish-base-image.yml.
 ################################################################################
 { config, lib, ... }:
 {
@@ -67,6 +70,7 @@
           runtimeInputs = [
             pkgs.unstable.tart
             pkgs.gnutar
+            pkgs.crane
           ];
           text = ''
             NIX_VERSION="${cfg.nixVersion}"
@@ -80,7 +84,8 @@
 
             VM_NAME="nixy-base-''${NIX_VERSION}"
             IMAGE_NAME="base-''${NIX_VERSION}"
-            IMAGE_REPO="''${REGISTRY}/''${IMAGE_NAME}"
+            # OCI references must be lowercase; ghcr.io is case-insensitive.
+            IMAGE_REPO="$(echo "''${REGISTRY}/''${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')"
             BUILD_VERSION="$(date -u +%Y.%m.%d-%H%M%S)"
             BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
@@ -163,25 +168,41 @@
               exit 1
             fi
             echo "''${GH_TOKEN}" | tart login ghcr.io --username "''${GH_USERNAME}" --password-stdin
+            # crane uses its own credential store, so authenticate it separately.
+            echo "''${GH_TOKEN}" | crane auth login ghcr.io --username "''${GH_USERNAME}" --password-stdin
 
             # `--chunk-size 3` enables ghcr.io's chunked-upload path (<4 MB per
             # chunk); the default monolithic upload times out on large blobs.
             echo "Pushing ''${IMAGE_REPO}:''${BUILD_VERSION} (and :latest) ..."
             tart push \
               --chunk-size 3 \
-              --label "org.opencontainers.image.source=''${REPO_URL}" \
-              --label "org.opencontainers.image.url=''${REPO_URL}" \
-              --label "org.opencontainers.image.title=nixy ''${IMAGE_NAME}" \
-              --label "org.opencontainers.image.description=nixy base image for Nix ''${NIX_VERSION} on Darwin (aarch64)" \
-              --label "org.opencontainers.image.version=''${BUILD_VERSION}" \
-              --label "org.opencontainers.image.created=''${BUILD_CREATED}" \
               "$VM_NAME" \
               "''${IMAGE_REPO}:''${BUILD_VERSION}" \
               "''${IMAGE_REPO}:latest"
 
+            # `tart push --label` does not write to the OCI manifest annotations
+            # field that ghcr.io reads for repository linking. Use crane mutate
+            # instead, which directly updates the manifest annotations map.
+            annotate_image() {
+              crane mutate \
+                --annotation "org.opencontainers.image.source=''${REPO_URL}" \
+                --annotation "org.opencontainers.image.url=''${REPO_URL}" \
+                --annotation "org.opencontainers.image.title=nixy ''${IMAGE_NAME}" \
+                --annotation "org.opencontainers.image.description=nixy base image for Nix ''${NIX_VERSION} on Darwin (aarch64)" \
+                --annotation "org.opencontainers.image.version=''${BUILD_VERSION}" \
+                --annotation "org.opencontainers.image.created=''${BUILD_CREATED}" \
+                "$1"
+            }
+            echo "Annotating ''${IMAGE_REPO}:''${BUILD_VERSION} ..."
+            annotate_image "''${IMAGE_REPO}:''${BUILD_VERSION}"
+            echo "Annotating ''${IMAGE_REPO}:latest ..."
+            annotate_image "''${IMAGE_REPO}:latest"
+
             echo "Done. Base image available at:"
             echo "  ''${IMAGE_REPO}:''${BUILD_VERSION}"
             echo "  ''${IMAGE_REPO}:latest"
+            echo ""
+            echo "Run the 'Publish Base Image' GitHub Actions workflow to make the package public."
           '';
         };
     };

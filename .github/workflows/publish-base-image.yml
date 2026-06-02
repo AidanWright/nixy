@@ -1,0 +1,42 @@
+# Publishes the tart base image by re-annotating it with GITHUB_TOKEN.
+# ghcr.io links the package to this repository and inherits its public
+# visibility when the manifest is written with a GITHUB_TOKEN.
+#
+# Trigger this workflow after each nix run --impure .#tart-base-image run.
+name: Publish Base Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      nix_version:
+        description: 'nixpkgs series (e.g. 26.05)'
+        required: true
+        default: '26.05'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjasonh/setup-crane@v0.4
+
+      - name: Link package to repository
+        env:
+          NIX_VERSION: ${{ inputs.nix_version }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE="ghcr.io/${OWNER}/nixy/base-${NIX_VERSION}"
+          crane mutate \
+            --annotation "org.opencontainers.image.source=${REPO_URL}" \
+            --annotation "org.opencontainers.image.url=${REPO_URL}" \
+            "${IMAGE}:latest"
