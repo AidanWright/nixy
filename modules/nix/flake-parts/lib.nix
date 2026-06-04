@@ -31,10 +31,8 @@
         modules = [
           inputs.self.modules.darwin.${name}
           inputs.self.modules.darwin.unstable-overlay
-          {
-            nixpkgs.hostPlatform = lib.mkDefault system;
-            system.stateVersion = lib.mkDefault 6;
-          }
+          inputs.self.modules.darwin.system-minimal
+          { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
       };
     };

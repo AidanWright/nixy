@@ -36,9 +36,31 @@
     };
 
     nix-darwin = {
-      url = "https://flakehub.com/f/nix-darwin/nix-darwin/0.2605.2360";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-nvim = {
+      url = "https://flakehub.com/f/AidanWright/nix-nvim/*";
+      inputs = {
+        gen-luarc.inputs = {
+          flake-parts = {
+            follows = "nix-nvim-gen-luarc-flake-parts";
+            inputs.nixpkgs-lib.follows = "nix-nvim-gen-luarc-nixpkgs-lib";
+          };
+          nixpkgs.follows = "nix-nvim-gen-luarc-nixpkgs";
+        };
+        nixpkgs.follows = "nix-nvim-nixpkgs";
+      };
+    };
+
+    nix-nvim-gen-luarc-flake-parts.url = "github:hercules-ci/flake-parts/2a55567fcf15b1b1c7ed712a2c6fadaec7412ea8";
+
+    nix-nvim-gen-luarc-nixpkgs.url = "github:NixOS/nixpkgs/c00d587b1a1afbf200b1d8f0b0e4ba9deb1c7f0e";
+
+    nix-nvim-gen-luarc-nixpkgs-lib.url = "https://github.com/NixOS/nixpkgs/archive/eb9ceca17df2ea50a250b6b27f7bf6ab0186f198.tar.gz";
+
+    nix-nvim-nixpkgs.url = "github:NixOS/nixpkgs/c5296fdd05cfa2c187990dd909864da9658df755";
 
     nixos-shell = {
       url = "github:Mic92/nixos-shell";

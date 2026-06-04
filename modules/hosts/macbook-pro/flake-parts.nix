@@ -1,4 +1,4 @@
-# modules/hosts/macbook/flake-parts.nix
+# modules/hosts/macbook-pro/flake-parts.nix
 ################################################################################
 # Registers macbook in flake.darwinConfigurations.
 ################################################################################
@@ -7,5 +7,5 @@
   ...
 }:
 {
-  flake.darwinConfigurations = inputs.self.lib.mkDarwin "aarch64-darwin" "macbook";
+  flake.darwinConfigurations = inputs.self.lib.mkDarwin "aarch64-darwin" "macbook-pro";
 }
