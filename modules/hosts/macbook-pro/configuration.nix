@@ -21,6 +21,8 @@
         nvim-pkg # The default package added by the overlay
         git
         claude-code
+        gnupg
+        gh
       ];
 
       environment.variables = {
