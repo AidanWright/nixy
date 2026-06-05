@@ -11,7 +11,7 @@
       lib,
       ...
     }:
-    lib.mkIf config.nix.enable {
+    lib.mkIf (!config.determinateNix.enable) {
       nix.settings = {
         experimental-features = [
           "nix-command"

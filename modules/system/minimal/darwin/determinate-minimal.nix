@@ -1,7 +1,7 @@
 # modules/system/minimal/darwin/determinate-minimal.nix
 ################################################################################
 # Nix settings for darwin hosts using Determinate Nix. Imported by system-minimal
-# when nix.enable = false (the signal that Determinate Nix is active).
+# when determinateNix.enable = true
 ################################################################################
 { ... }:
 {
@@ -11,7 +11,7 @@
       lib,
       ...
     }:
-    lib.mkIf (!config.nix.enable) {
+    lib.mkIf config.determinateNix.enable {
       # Custom settings written to /etc/nix/nix.custom.conf
       determinateNix = {
         customSettings = {
