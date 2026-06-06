@@ -40,6 +40,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+
     nix-nvim = {
       url = "https://flakehub.com/f/AidanWright/nix-nvim/*";
       inputs = {

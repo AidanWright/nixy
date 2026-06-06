@@ -14,8 +14,10 @@
         determinate
         tartVm
         nix-nvim-overlay
+        homebrew
       ];
       networking.hostName = "macbook-pro";
+      system.primaryUser = "aidanwright";
 
       environment.systemPackages = with pkgs; [
         nvim-pkg # The default package added by the overlay
@@ -23,6 +25,28 @@
         claude-code
         gnupg
         gh
+        unstable.bitwarden-cli
+        unstable.librewolf
+        rectangle
+        tailscale
+        #unstable.kitty
+        #unstable.kitty-themes
+        eza
+        qemu
+      ];
+
+      services.tailscale.enable = true;
+
+      homebrew.casks = [
+        "bitwarden"
+        "orbstack"
+        "tailscale-app"
+        "zoho-workdrive"
+        "qspace-pro"
+      ];
+
+      homebrew.brews = [
+        "ccat"
       ];
 
       environment.variables = {

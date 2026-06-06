@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "brew-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779646357,
+        "narHash": "sha256-rnnAaESXxItX4D9xCMGvs3hfDBjbbTYht7OluRcvT8k=",
+        "owner": "Homebrew",
+        "repo": "brew",
+        "rev": "10a163ac127624caa80cc5cc5a705e97f3615b0e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Homebrew",
+        "ref": "5.1.14",
+        "repo": "brew",
+        "type": "github"
+      }
+    },
     "determinate": {
       "inputs": {
         "determinate-nixd-aarch64-darwin": "determinate-nixd-aarch64-darwin",
@@ -357,6 +374,24 @@
         "type": "github"
       }
     },
+    "nix-homebrew": {
+      "inputs": {
+        "brew-src": "brew-src"
+      },
+      "locked": {
+        "lastModified": 1780492467,
+        "narHash": "sha256-zMEJwtQPmsPPgPczFkyjWHgd1z0HagOPS2Wt2WDYLJY=",
+        "owner": "zhaofengli",
+        "repo": "nix-homebrew",
+        "rev": "562332f97de9f5ba51aa647d70462e88222b2988",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zhaofengli",
+        "repo": "nix-homebrew",
+        "type": "github"
+      }
+    },
     "nix-nvim": {
       "inputs": {
         "emojify-nvim": "emojify-nvim",
@@ -562,6 +597,7 @@
         "import-tree": "import-tree",
         "nix-auto-follow": "nix-auto-follow",
         "nix-darwin": "nix-darwin",
+        "nix-homebrew": "nix-homebrew",
         "nix-nvim": "nix-nvim",
         "nix-nvim-gen-luarc-flake-parts": "nix-nvim-gen-luarc-flake-parts",
         "nix-nvim-gen-luarc-nixpkgs": "nix-nvim-gen-luarc-nixpkgs",
