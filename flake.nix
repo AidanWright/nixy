@@ -73,6 +73,19 @@
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        systems.follows = "systems";
+      };
+    };
+
     systems.url = "github:nix-systems/default";
 
     treefmt-nix = {
