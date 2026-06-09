@@ -17,6 +17,7 @@
         homebrew
         remoteBuilders
         cachix
+        spicetify
       ];
       networking.hostName = "macbook-pro";
       system.primaryUser = "aidanwright";
