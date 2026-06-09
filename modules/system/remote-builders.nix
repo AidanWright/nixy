@@ -13,11 +13,6 @@
           ServerAliveInterval 60
           IdentityFile /etc/nix/builder_key
           SetEnv NIXBUILDNET_KEEP_BUILDS_RUNNING=true NIXBUILDNET_REUSE_BUILD_FAILURES=false
-
-        Host 192.168.139.21
-          User aidanwright
-          IdentityFile /etc/nix/builder_key
-          StrictHostKeyChecking no
       '';
 
       programs.ssh.knownHosts = {
@@ -29,7 +24,6 @@
 
       environment.etc."nix/machines".text = ''
         ssh://eu.nixbuild.net x86_64-linux - 100 1 benchmark,big-parallel
-        ssh://aidanwright@192.168.139.21 x86_64-linux /etc/nix/builder_key 4 1
       '';
 
       determinateNix.customSettings = {
