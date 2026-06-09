@@ -28,8 +28,8 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
-    homebrew-truesync = {
-      url = "github:AidanWright/homebrew-truesync";
+    homebrew-zoho = {
+      url = "github:AidanWright/homebrew-zoho";
       flake = false;
     };
 

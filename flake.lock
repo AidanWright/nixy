@@ -276,19 +276,19 @@
         "type": "github"
       }
     },
-    "homebrew-truesync": {
+    "homebrew-zoho": {
       "flake": false,
       "locked": {
-        "lastModified": 1781022791,
-        "narHash": "sha256-wTpaTmmL/fi6YFmtOY23Exe0dGwG3buZuUVtbbsTUzM=",
+        "lastModified": 1781039500,
+        "narHash": "sha256-BdLHDf9yso38Dd+uEcBQVbeJR85TiJo/VHjyrsgK6qQ=",
         "owner": "AidanWright",
-        "repo": "homebrew-truesync",
-        "rev": "ff9b44de35c40eb816f697dfa47a484413fcd7fd",
+        "repo": "homebrew-zoho",
+        "rev": "c81e1642afbe14963f4525ba348f2cc0fc9655ef",
         "type": "github"
       },
       "original": {
         "owner": "AidanWright",
-        "repo": "homebrew-truesync",
+        "repo": "homebrew-zoho",
         "type": "github"
       }
     },
@@ -610,7 +610,7 @@
         "determinate": "determinate",
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
-        "homebrew-truesync": "homebrew-truesync",
+        "homebrew-zoho": "homebrew-zoho",
         "import-tree": "import-tree",
         "nix-auto-follow": "nix-auto-follow",
         "nix-darwin": "nix-darwin",
