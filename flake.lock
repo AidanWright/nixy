@@ -276,6 +276,22 @@
         "type": "github"
       }
     },
+    "homebrew-truesync": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781022791,
+        "narHash": "sha256-wTpaTmmL/fi6YFmtOY23Exe0dGwG3buZuUVtbbsTUzM=",
+        "owner": "AidanWright",
+        "repo": "homebrew-truesync",
+        "rev": "ff9b44de35c40eb816f697dfa47a484413fcd7fd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AidanWright",
+        "repo": "homebrew-truesync",
+        "type": "github"
+      }
+    },
     "import-tree": {
       "locked": {
         "lastModified": 1778781969,
@@ -594,6 +610,7 @@
         "determinate": "determinate",
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
+        "homebrew-truesync": "homebrew-truesync",
         "import-tree": "import-tree",
         "nix-auto-follow": "nix-auto-follow",
         "nix-darwin": "nix-darwin",

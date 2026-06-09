@@ -18,6 +18,7 @@
         remoteBuilders
         cachix
         spicetify
+        zoho
       ];
       networking.hostName = "macbook-pro";
       system.primaryUser = "aidanwright";
@@ -44,13 +45,16 @@
         "bitwarden"
         "orbstack"
         "tailscale-app"
-        "zoho-workdrive"
         "qspace-pro"
       ];
 
       homebrew.brews = [
         "ccat"
       ];
+
+      homebrew.masApps = {
+        "Airmail" = 918858936;
+      };
 
       environment.variables = {
         EDITOR = "nvim";

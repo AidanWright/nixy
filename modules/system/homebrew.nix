@@ -8,12 +8,13 @@
   flake-file.inputs.nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
   flake.modules.darwin.homebrew =
-    { ... }:
+    { config, ... }:
     {
       imports = [ inputs.nix-homebrew.darwinModules.nix-homebrew ];
 
       homebrew.enable = true;
       homebrew.onActivation.cleanup = "zap";
+      homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
 
       nix-homebrew = {
         # Install Homebrew under the default prefix
@@ -28,7 +29,7 @@
         # Optional: Enable fully-declarative tap management
         #
         # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
-        mutableTaps = true;
+        mutableTaps = false;
       };
     };
 }

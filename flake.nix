@@ -28,6 +28,11 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    homebrew-truesync = {
+      url = "github:AidanWright/homebrew-truesync";
+      flake = false;
+    };
+
     import-tree.url = "github:vic/import-tree";
 
     nix-auto-follow = {

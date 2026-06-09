@@ -18,4 +18,12 @@
 
   flake-file.description = "Base configurations for my NixOs Desktop & Servers and Nix-Darwin hosts";
   flake-file.style.sep.inputs = "\n\n";
+
+  systems = [
+    "aarch64-darwin"
+    "aarch64-linux"
+    # I personally don't use a intel macbook
+    #"x86_64-darwin"
+    "x86_64-linux"
+  ];
 }
