@@ -15,6 +15,8 @@
         tartVm
         nix-nvim-overlay
         homebrew
+        remoteBuilders
+        cachix
       ];
       networking.hostName = "macbook-pro";
       system.primaryUser = "aidanwright";

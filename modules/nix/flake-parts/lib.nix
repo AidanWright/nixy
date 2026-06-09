@@ -21,6 +21,7 @@
         modules = [
           inputs.self.modules.nixos.${name}
           inputs.self.modules.nixos.unstable-overlay
+          inputs.self.modules.nixos.nixos-minimal
           { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
       };

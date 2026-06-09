@@ -1,4 +1,4 @@
-# modules/hosts/macbook-pro/flake-parts.nix
+# modules/hosts/biggy/flake-parts.nix
 ################################################################################
 # Registers macbook in flake.darwinConfigurations.
 ################################################################################
@@ -7,5 +7,5 @@
   ...
 }:
 {
-  flake.nixosConfigurations = inputs.self.lib.mkNixos "aarch64-linux" "jonathan";
+  flake.nixosConfigurations = inputs.self.lib.mkNixos "aarch64-linux" "biggy";
 }

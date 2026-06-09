@@ -1,0 +1,9 @@
+keys:
+  # Run on jonathan: ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub
+  - &jonathan REPLACE_WITH_JONATHAN_AGE_PUBKEY
+
+creation_rules:
+  - path_regex: modules/hosts/jonathan/.*\.yaml
+    key_groups:
+      - age:
+          - *jonathan
