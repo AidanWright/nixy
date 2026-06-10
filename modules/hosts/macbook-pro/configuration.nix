@@ -19,6 +19,8 @@
         cachix
         spicetify
         zoho
+        basic
+        desktop
       ];
       networking.hostName = "macbook-pro";
       system.primaryUser = "aidanwright";
@@ -33,11 +35,24 @@
         unstable.librewolf
         rectangle
         tailscale
-        #unstable.kitty
-        #unstable.kitty-themes
+        kitty
+        kitty-themes
         eza
         qemu
       ];
+
+
+      launchd.user.agents.defaultBrowser = {
+        serviceConfig = {
+          ProgramArguments = [
+            "${pkgs.defaultbrowser}/bin/defaultbrowser"
+            "librewolf"
+          ];
+          RunAtLoad = true;
+          StandardOutPath = "/tmp/defaultbrowser.log";
+          StandardErrorPath = "/tmp/defaultbrowser.log";
+        };
+      };
 
       services.tailscale.enable = true;
 
@@ -53,7 +68,7 @@
       ];
 
       homebrew.masApps = {
-        "Airmail" = 918858936;
+        #"Airmail" = 918858936;
       };
 
       environment.variables = {
