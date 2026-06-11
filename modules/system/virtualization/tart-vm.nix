@@ -9,7 +9,10 @@
 #     nix run --impure .#tart-base-image -- lix
 #
 # Run from the flake root (copies the working tree, including uncommitted changes):
-#   nix run --impure .#darwinConfigurations.<hostname>.config.system.build.tart-vm
+#   nix run --impure .#darwinConfigurations.<hostname>.config.system.build.tart-vm [-- --no-graphics]
+#
+# The flake is patched in-VM to use "admin" (the base image's logged-in user)
+# as the primary user and to skip brew cleanup, so no user setup or reboot is needed.
 ################################################################################
 { ... }:
 {
@@ -64,6 +67,15 @@
           info()  { echo -e "\x1b[1;97;44m[INFO]\x1b[0m $1"; }
           error() { echo -e "\x1b[1;97;101m[ERROR]\x1b[0m $1"; }
 
+          noGraphics=false
+          for arg in "$@"; do
+            case "$arg" in
+              --no-graphics) noGraphics=true ;;
+              --graphics)    noGraphics=false ;;
+              *) error "Unknown argument: $arg"; exit 1 ;;
+            esac
+          done
+
           cleanup() {
             info "Destroying VM..."
             tart stop "$VM_NAME" 2>/dev/null || true
@@ -75,7 +87,12 @@
           tart clone "${imageRef}" "$VM_NAME"
           tart set "$VM_NAME" --cpu "${cores}" --memory "${ramMb}"
 
-          tart run "$VM_NAME" --no-graphics &
+          if $noGraphics; then
+            tart run "$VM_NAME" --no-graphics &
+          else
+            tart run "$VM_NAME" &
+          fi
+          TART_PID=$!
 
           info "Waiting for VM network..."
           tart ip "$VM_NAME" --wait 600 >/dev/null
@@ -104,6 +121,12 @@
             sleep 5
           done
 
+          info "Clearing Homebrew paths blocked by nix-homebrew..."
+          tart exec "$VM_NAME" bash -c "
+            sudo rm -rf /opt/homebrew/Library/Taps
+            sudo rm -f /opt/homebrew/bin/brew
+          "
+
           info "Copying flake to VM..."
           sshpass -p admin scp \
             -F /dev/null \
@@ -113,12 +136,49 @@
 
           BASENAME=$(basename "$PWD")
 
+          info "Patching configuration for VM..."
+          tart exec "$VM_NAME" bash -c "
+            sudo chmod -R a+rX /var/tmp/$BASENAME
+
+            printf '%s\n' \
+              '{ lib, ... }: {' \
+              '  system.primaryUser = lib.mkForce \"admin\";' \
+              '  homebrew.onActivation.cleanup = lib.mkForce \"none\";' \
+              '  nix-homebrew.autoMigrate = lib.mkForce true;' \
+              '}' \
+              > /var/tmp/$BASENAME/modules/hosts/${hostname}/_vm-overrides.nix
+
+            sed -ibak \
+              's|imports = with inputs.self.modules.darwin; \[|imports = [ ./_vm-overrides.nix ] ++ (with inputs.self.modules.darwin; [|' \
+              /var/tmp/$BASENAME/modules/hosts/${hostname}/configuration.nix
+            sed -ibak \
+              's|      \];|      ]);|' \
+              /var/tmp/$BASENAME/modules/hosts/${hostname}/configuration.nix
+            rm -f /var/tmp/$BASENAME/modules/hosts/${hostname}/configuration.nix.bak
+          "
+
           info "Applying configuration..."
-          tart exec "$VM_NAME" bash -c \
-            "source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh \
-            && sudo /run/current-system/sw/bin/darwin-rebuild switch \
-                 --flake path:/var/tmp/$BASENAME#${hostname} 2>&1 \
-            | sed -u 's/^/\x1b[0;38;5;254;48;5;236m[darwin-rebuild]\x1b[0m /'"
+          tart exec "$VM_NAME" bash -ec \
+            "source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+             nix build --out-link /tmp/darwin-system \
+               'path:/var/tmp/$BASENAME#darwinConfigurations.${hostname}.system'
+             sudo /tmp/darwin-system/activate" \
+            2>&1 | sed -u 's/^/\x1b[0;38;5;254;48;5;236m[darwin-rebuild]\x1b[0m /'
+
+
+          tart exec "$VM_NAME" bash -ec \
+            "source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+             git -C \"/var/tmp/$BASENAME\" add \
+               \"modules/hosts/${hostname}/_vm-overrides.nix\" \
+               \"modules/hosts/${hostname}/configuration.nix\"
+             sudo /run/current-system/sw/bin/darwin-rebuild switch \
+               --flake 'path:/var/tmp/$BASENAME#${hostname}'" \
+            2>&1 | sed -u 's/^/\x1b[0;38;5;254;48;5;236m[darwin-rebuild x2]\x1b[0m /' 
+
+          if ! $noGraphics; then
+            info "VM is ready. Close the graphics window to stop."
+            wait "$TART_PID" 2>/dev/null || true
+          fi
         '';
       };
     };

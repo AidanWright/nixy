@@ -34,9 +34,11 @@
           ProgramArguments = [
             "/usr/bin/osascript"
             "-e"
-            ''tell application "Finder" to set desktop picture to POSIX file "${config.stylix.image}"''
+            ''tell application "System Events" to tell every desktop to set picture to "${config.stylix.image}"''
           ];
           RunAtLoad = true;
+          StandardOutPath = "/tmp/wallpaper.log";
+          StandardErrorPath = "/tmp/wallpaper.log";
         };
       };
 
