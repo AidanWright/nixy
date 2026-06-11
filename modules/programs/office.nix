@@ -16,6 +16,7 @@
       homebrew.casks = [
         "zoho-workdrive-truesync"
         "zoho-trident"
+        "claude"
       ];
       system.defaults.CustomUserPreferences."com.zoho.trident.direct".MenuBarState = 0;
     };
