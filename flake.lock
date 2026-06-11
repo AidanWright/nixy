@@ -434,22 +434,6 @@
         "type": "github"
       }
     },
-    "homebrew-bengerthelorf": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1780377352,
-        "narHash": "sha256-xeQLZc7Ysy3LHGspGMcWwIhQbEWztl8u3lNP3XEh3ZU=",
-        "owner": "Bengerthelorf",
-        "repo": "homebrew-tap",
-        "rev": "f07936a40c38b279616b0c48f22b8d06456c3858",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Bengerthelorf",
-        "repo": "homebrew-tap",
-        "type": "github"
-      }
-    },
     "homebrew-zoho": {
       "flake": false,
       "locked": {
@@ -810,7 +794,6 @@
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
-        "homebrew-bengerthelorf": "homebrew-bengerthelorf",
         "homebrew-zoho": "homebrew-zoho",
         "import-tree": "import-tree",
         "nix-auto-follow": "nix-auto-follow",

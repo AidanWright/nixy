@@ -33,11 +33,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    homebrew-bengerthelorf = {
-      url = "github:Bengerthelorf/homebrew-tap";
-      flake = false;
-    };
-
     homebrew-zoho = {
       url = "github:AidanWright/homebrew-zoho";
       flake = false;

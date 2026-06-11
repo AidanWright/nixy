@@ -2,16 +2,16 @@
 ################################################################################
 # Desktop appearance: dock, Finder, and global UI defaults.
 ################################################################################
-{ inputs, ... }:
+{ ... }:
 {
 
-  flake-file.inputs.homebrew-bengerthelorf = {
-    url = "github:Bengerthelorf/homebrew-tap";
-    flake = false;
-  };
-
   flake.modules.darwin.desktop =
-    { config, pkgs, lib, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     {
       environment.systemPackages = with pkgs; [
         unstable.librewolf
@@ -41,18 +41,16 @@
         };
       };
 
-      nix-homebrew.taps."Bengerthelorf/homebrew-tap" = inputs.homebrew-bengerthelorf;
-
       homebrew.casks = [
         "dockdoor"
         "qspace-pro"
-        "Bengerthelorf/tap/iconchanger"
       ];
 
       system.activationScripts.postActivation.text = lib.mkAfter ''
-        if [ -f /Applications/IconChanger.app/Contents/Resources/IconChangerCLI ]; then
-          cp /Applications/IconChanger.app/Contents/Resources/IconChangerCLI /usr/local/bin/iconchanger
-          chmod +x /usr/local/bin/iconchanger
+        kittyResources="/Applications/Nix Apps/kitty.app/Contents/Resources"
+        if [ -d "$kittyResources" ]; then
+          cp ${./whiskers.icns} "$kittyResources/kitty.icns"
+          touch "/Applications/Nix Apps/kitty.app"
         fi
       '';
 
@@ -97,7 +95,7 @@
 
         NSGlobalDomain = {
           AppleInterfaceStyle = "Dark";
-          AppleIconAppearanceTheme = "RegularDark";
+          AppleIconAppearanceTheme = "TintedDark";
           InitialKeyRepeat = 15;
           KeyRepeat = 2;
           AppleShowAllExtensions = true;
@@ -128,6 +126,8 @@
         };
 
         CustomUserPreferences = {
+          "NSGlobalDomain".AppleIconAppearanceTintColor = "Other";
+          "NSGlobalDomain".AppleIconAppearanceCustomTintColor = "1.000000 0.699742 0.475000 0.687281";
           "com.apple.Spotlight"."NSStatusItem VisibleCC Item-0" = false;
           "com.ethanbills.DockDoor".showMenuBarIcon = false;
           "com.jinghaoshe.qspace.pro".settings_hidden_visible = 1;
