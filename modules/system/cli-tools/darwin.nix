@@ -18,11 +18,11 @@
       environment.systemPackages = with pkgs; [
         nvim-pkg
         git
-        claude-code
+        unstable.claude-code
         gnupg
         gh
         unstable.bitwarden-cli
-        tailscale
+        unstable.tailscale
         eza
         qemu
       ];

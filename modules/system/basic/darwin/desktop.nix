@@ -1,10 +1,9 @@
 # modules/system/basic/darwin/desktop.nix
 ################################################################################
-# Desktop appearance: dock, Finder, and global UI defaults.
+# Desktop appearance: dock, Finder, Stage Manager, and global UI defaults.
 ################################################################################
 { ... }:
 {
-
   flake.modules.darwin.desktop =
     {
       config,
@@ -46,13 +45,27 @@
         "qspace-pro"
       ];
 
-      system.activationScripts.postActivation.text = lib.mkAfter ''
-        kittyResources="/Applications/Nix Apps/kitty.app/Contents/Resources"
-        if [ -d "$kittyResources" ]; then
-          cp ${./whiskers.icns} "$kittyResources/kitty.icns"
-          touch "/Applications/Nix Apps/kitty.app"
-        fi
-      '';
+      darwin = {
+        hotCorners = {
+          topLeft = "disabled";
+          topRight = "disabled";
+          bottomLeft = "desktop";
+          bottomRight = "lockScreen";
+        };
+
+        finder.defaultView = "list";
+
+        appearance = {
+          sidebarIconSize = "medium";
+          iconTintColor = "1.0 0.699742 0.475 0.687281";
+        };
+
+        dock.titleBarDoubleClick = "zoom";
+        scrollBars.clickAction = "jumpToNextPage";
+        menuBar.hideSpotlightIcon = true;
+        stageManager.groupWindowsFromSameApp = true;
+        widgets.showOnDesktop = true;
+      };
 
       system.defaults = {
         dock = {
@@ -62,23 +75,34 @@
           orientation = "bottom";
           show-process-indicators = true;
           tilesize = 64;
-          # 1: Disabled, 4: Desktop, 5: Start Screen Saver, 13: Lock Screen
-          wvous-bl-corner = 4;
-          wvous-br-corner = 13;
-          wvous-tl-corner = 1;
-          wvous-tr-corner = 1;
-          persistent-apps = [
-            { app = "/Applications/QSpace Pro.app"; }
-            { app = "/System/Applications/Apps.app"; }
-            { spacer.small = true; }
-            { app = "/Applications/Nix Apps/LibreWolf.app"; }
-            { app = "/System/Applications/Messages.app"; }
-            { app = "/Applications/Trident.app"; }
-            { app = "/Applications/Nix Apps/Spotify.app"; }
-            { app = "/Applications/Nix Apps/kitty.app"; }
-            { app = "/System/Applications/System Settings.app"; }
-            { spacer.small = true; }
-          ];
+          mineffect = "genie";
+          launchanim = true;
+          persistent-apps =
+            let
+              primaryUser = config.system.primaryUser;
+              spotifyApp =
+                if lib.hasAttr "spicetify" config.programs then
+                  { app = "/Applications/Nix Apps/Spotify.app"; }
+                else
+                  { app = "/System/Applications/Music.app"; };
+              kittyApp =
+                if config.home-manager.users.${primaryUser}.programs.kitty.enable then
+                  { app = "/Users/${primaryUser}/Applications/Home Manager Apps/kitty.app"; }
+                else
+                  { app = "/System/Applications/Utilities/Terminal.app"; };
+            in
+            [
+              { app = "/Applications/QSpace Pro.app"; }
+              { app = "/System/Applications/Apps.app"; }
+              { spacer.small = true; }
+              { app = "/Applications/Nix Apps/LibreWolf.app"; }
+              { app = "/System/Applications/Messages.app"; }
+              { app = "/Applications/Trident.app"; }
+              spotifyApp
+              kittyApp
+              { app = "/System/Applications/System Settings.app"; }
+              { spacer.small = true; }
+            ];
           persistent-others = [
             {
               folder = {
@@ -91,17 +115,16 @@
           ];
         };
 
-        WindowManager.StandardHideWidgets = true;
-
         NSGlobalDomain = {
           AppleInterfaceStyle = "Dark";
           AppleIconAppearanceTheme = "TintedDark";
-          InitialKeyRepeat = 15;
-          KeyRepeat = 2;
+          AppleShowScrollBars = "Automatic";
           AppleShowAllExtensions = true;
           AppleShowAllFiles = true;
-          NSStatusItemSelectionPadding = 24;
           NSStatusItemSpacing = 12;
+          NSStatusItemSelectionPadding = 24;
+          InitialKeyRepeat = 15;
+          KeyRepeat = 2;
         };
 
         finder = {
@@ -112,23 +135,25 @@
           _FXSortFoldersFirstOnDesktop = true;
           CreateDesktop = true;
           FXEnableExtensionChangeWarning = false;
-          # "icnv" = Icon, "Nlsv" = List, "clmv" = Column, "Flwv" = Gallery
-          FXPreferredViewStyle = "Nlsv";
           FXRemoveOldTrashItems = true;
           ShowRemovableMediaOnDesktop = false;
         };
+
+        WindowManager.EnableStandardClickToShowDesktop = true;
 
         SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
 
         controlcenter = {
           BatteryShowPercentage = true;
           NowPlaying = false;
+          Bluetooth = true;
+          Sound = null;
+          Display = null;
+          FocusModes = null;
+          AirDrop = null;
         };
 
         CustomUserPreferences = {
-          "NSGlobalDomain".AppleIconAppearanceTintColor = "Other";
-          "NSGlobalDomain".AppleIconAppearanceCustomTintColor = "1.000000 0.699742 0.475000 0.687281";
-          "com.apple.Spotlight"."NSStatusItem VisibleCC Item-0" = false;
           "com.ethanbills.DockDoor".showMenuBarIcon = false;
           "com.jinghaoshe.qspace.pro".settings_hidden_visible = 1;
         };

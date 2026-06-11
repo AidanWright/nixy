@@ -41,8 +41,24 @@
           historyInSidebar
           #marketplace
         ];
-        theme = spicePkgs.themes.text;
-        #colorScheme = "nord-dark";
+        theme = {
+          name = "tui";
+          src =
+            (pkgs.fetchFromGitHub {
+              owner = "spicetify";
+              repo = "spicetify-themes";
+              rev = "26e77f560d9eed3edc0f89c4304520d579631d54";
+              hash = "sha256-jEBkyzCjcN6eUZ/RLmxRIPlrL1PEvKGOr/9auQOsqPg=";
+            })
+            + /text;
+          additionalCss = ''
+            .view-homeShortcutsGrid-shortcuts::before {
+              content: "────█▀█▄▄▄▄─────██▄\A────█▀▄▄▄▄█─────█▀▀█\A─▄▄▄█─────█──▄▄▄█\A██▀▄█─▄██▀█─███▀█\A─▀▀▀──▀█▄█▀─▀█▄█▀\A";
+            }
+          '';
+        };
+        #theme = spicePkgs.themes.text;
+        colorScheme = "Gruvbox";
       };
     };
 }
