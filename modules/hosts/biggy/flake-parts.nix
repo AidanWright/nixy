@@ -1,6 +1,6 @@
 # modules/hosts/biggy/flake-parts.nix
 ################################################################################
-# Registers macbook in flake.darwinConfigurations.
+# Registers biggy in flake.nixosConfigurations.
 ################################################################################
 {
   inputs,

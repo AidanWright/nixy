@@ -1,4 +1,4 @@
-# modules/system/homebrew.nix
+# modules/system/basic/darwin/homebrew.nix
 ################################################################################
 # Enables nix-darwin's Homebrew integration so hosts can declare casks and
 # brews declaratively.
@@ -24,10 +24,8 @@
         enableRosetta = true;
 
         # User owning the Homebrew prefix
-        user = "aidanwright";
+        user = config.system.primaryUser;
 
-        # Optional: Enable fully-declarative tap management
-        #
         # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
         mutableTaps = false;
       };

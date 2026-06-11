@@ -1,6 +1,6 @@
-# modules/programs/zoho.nix
+# modules/programs/office.nix
 ################################################################################
-# Adds the homebrew-zoho tap and installs Zoho desktop apps.
+# Zoho office suite: WorkDrive and Trident.
 ################################################################################
 { inputs, ... }:
 {
@@ -9,7 +9,7 @@
     flake = false;
   };
 
-  flake.modules.darwin.zoho =
+  flake.modules.darwin.office =
     { ... }:
     {
       nix-homebrew.taps."AidanWright/homebrew-zoho" = inputs.homebrew-zoho;
@@ -17,5 +17,6 @@
         "zoho-workdrive-truesync"
         "zoho-trident"
       ];
+      system.defaults.CustomUserPreferences."com.zoho.trident.direct".MenuBarState = 0;
     };
 }

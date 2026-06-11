@@ -1,7 +1,6 @@
 # modules/nix/overlays/nvim.nix
 ################################################################################
-# Creates an overlay that exposes pkgs.unstable.<pkg> across all configurations.
-# The overlay must be applied in each host's module list to take effect.
+# Exposes pkgs.nvim-pkg and pkgs.nvim-* from the nix-nvim flake.
 ################################################################################
 { inputs, ... }:
 {

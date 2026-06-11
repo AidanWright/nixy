@@ -1,6 +1,6 @@
-# modules/system/sops.nix
+# modules/system/basic/sops.nix
 ################################################################################
-#
+# Configures sops-nix for NixOS secrets management.
 ################################################################################
 { inputs, ... }:
 {

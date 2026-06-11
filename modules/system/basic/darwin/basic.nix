@@ -2,15 +2,22 @@
 ################################################################################
 # Basic system settings: power management and sleep behaviour.
 ################################################################################
-{ ... }:
+{ inputs, ... }:
 {
   flake.modules.darwin.basic =
     { ... }:
     {
-      power.sleep.display = 5;
-      power.sleep.computer = 10;
-      power.sleep.harddisk = 5;
-      #power.restartAfterFreeze = true;
-      #power.restartAfterPowerFailure = true;
+      imports = with inputs.self.modules.darwin; [
+        determinate
+        homebrew
+        home-manager
+        stylix
+      ];
+
+      power.sleep = {
+        display = 5;
+        computer = 10;
+        harddisk = 5;
+      };
     };
 }

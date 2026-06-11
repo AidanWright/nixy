@@ -28,6 +28,16 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
+    home-manager = {
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    homebrew-bengerthelorf = {
+      url = "github:Bengerthelorf/homebrew-tap";
+      flake = false;
+    };
+
     homebrew-zoho = {
       url = "github:AidanWright/homebrew-zoho";
       flake = false;
@@ -89,6 +99,11 @@
         nixpkgs.follows = "nixpkgs-unstable";
         systems.follows = "systems";
       };
+    };
+
+    stylix = {
+      url = "github:danth/stylix/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     systems.url = "github:nix-systems/default";

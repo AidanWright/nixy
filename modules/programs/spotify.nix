@@ -1,6 +1,6 @@
-# modules/programs/spicetify.nix
+# modules/programs/spotify.nix
 ################################################################################
-#
+# Extends Spotify with custom themes and extensions via Spicetify.
 ################################################################################
 { inputs, ... }:
 {
@@ -10,7 +10,7 @@
     inputs.systems.follows = "systems";
   };
 
-  flake.modules.darwin.spicetify =
+  flake.modules.darwin.spotify =
     { pkgs, ... }:
     let
       spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
@@ -41,7 +41,6 @@
           historyInSidebar
           #marketplace
         ];
-
         theme = spicePkgs.themes.text;
         #colorScheme = "nord-dark";
       };
