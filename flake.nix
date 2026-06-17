@@ -21,6 +21,11 @@
       };
     };
 
+    disko = {
+      url = "github:nix-community/disko/latest";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-file.url = "github:vic/flake-file";
 
     flake-parts = {
@@ -74,6 +79,14 @@
 
     nix-nvim-nixpkgs.url = "github:NixOS/nixpkgs/c5296fdd05cfa2c187990dd909864da9658df755";
 
+    nixos-anywhere = {
+      url = "github:nix-community/nixos-anywhere";
+      inputs = {
+        disko.follows = "disko";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
     nixos-shell = {
       url = "github:Mic92/nixos-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -82,6 +95,11 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     sops-nix = {
       url = "github:Mic92/sops-nix";

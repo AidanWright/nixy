@@ -22,6 +22,7 @@
           inputs.self.modules.nixos.${name}
           inputs.self.modules.nixos.unstable-overlay
           inputs.self.modules.nixos.nixos-minimal
+          inputs.self.modules.nixos.remote-deploy
           { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
       };

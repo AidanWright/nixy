@@ -28,7 +28,7 @@
           forceClick = true;
           clickPressure = "medium";
           lookUpGesture = "forceClick";
-          trackingSpeed = 2.0;
+          trackingSpeed = 1.0;
         };
 
         keyboard = {

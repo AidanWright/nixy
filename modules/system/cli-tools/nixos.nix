@@ -18,7 +18,6 @@
         git
         gnupg
         gh
-        eza
       ];
     };
 }

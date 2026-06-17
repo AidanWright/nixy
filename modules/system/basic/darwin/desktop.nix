@@ -15,6 +15,10 @@
       environment.systemPackages = with pkgs; [
         unstable.librewolf
         rectangle
+        unstable.dorion
+        freetube
+        mpv
+        syncplay
       ];
 
       launchd.user.agents.defaultBrowser = {
@@ -45,6 +49,7 @@
       homebrew.casks = [
         "dockdoor"
         "qspace-pro"
+        "cryptomator"
       ];
 
       darwin = {

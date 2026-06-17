@@ -25,6 +25,9 @@
         unstable.tailscale
         eza
         qemu
+        unstable.sops
+        unstable.age
+        unstable.ssh-to-age
       ];
 
       services.tailscale.enable = true;

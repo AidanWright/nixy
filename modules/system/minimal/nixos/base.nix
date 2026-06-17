@@ -2,11 +2,16 @@
 ################################################################################
 #
 ################################################################################
-{ ... }:
+{ inputs, ... }:
 {
   flake.modules.nixos.nixos-minimal =
     { pkgs, ... }:
     {
+      imports = with inputs.self.modules.nixos; [
+        cli-tools
+        sops
+      ];
+
       nix.settings.experimental-features = [
         "nix-command"
         "flakes"
@@ -25,7 +30,5 @@
       };
 
       system.stateVersion = "26.05";
-
-      environment.systemPackages = [ pkgs.git ];
     };
 }
