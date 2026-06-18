@@ -9,19 +9,26 @@
     flake = false;
   };
 
-  flake.aspects.office.darwin =
-    { ... }:
+  flake.aspects =
+    { aspects, ... }:
     {
-      nix-homebrew.taps."AidanWright/homebrew-zoho" = inputs.homebrew-zoho;
-      # nix-homebrew symlinks taps from the Nix store, making this a custom-remote
-      # tap that Homebrew's default tap-trust gate refuses. Per-cask trust is not
-      # allowed for custom-remote taps, so the whole (self-owned) tap is trusted.
-      nix-homebrew.trust.taps = [ "aidanwright/zoho" ];
-      homebrew.casks = [
-        "zoho-workdrive-truesync"
-        "zoho-trident"
-        "claude"
-      ];
-      system.defaults.CustomUserPreferences."com.zoho.trident.direct".MenuBarState = 0;
+      office = {
+        includes = with aspects; [ librewolf ];
+        darwin =
+          { ... }:
+          {
+            nix-homebrew.taps."AidanWright/homebrew-zoho" = inputs.homebrew-zoho;
+            # nix-homebrew symlinks taps from the Nix store, making this a custom-remote
+            # tap that Homebrew's default tap-trust gate refuses. Per-cask trust is not
+            # allowed for custom-remote taps, so the whole (self-owned) tap is trusted.
+            nix-homebrew.trust.taps = [ "aidanwright/zoho" ];
+            homebrew.casks = [
+              "zoho-workdrive-truesync"
+              "zoho-trident"
+              "claude"
+            ];
+            system.defaults.CustomUserPreferences."com.zoho.trident.direct".MenuBarState = 0;
+          };
+      };
     };
 }

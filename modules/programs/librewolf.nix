@@ -20,11 +20,47 @@
       ...
     }:
     let
-      firefoxAddons =
-        inputs.nur.legacyPackages.${pkgs.stdenv.hostPlatform.system}.repos.rycee.firefox-addons;
+      # Sourced through the overlay rather than nur.legacyPackages so the host's
+      # allowUnfree config applies; some add-ons (onetab) are unfree.
+      firefoxAddons = pkgs.nur.repos.rycee.firefox-addons;
+
+      browserExtensions = with firefoxAddons; [
+        ublock-origin
+        bitwarden
+        clearurls
+        dearrow
+        onetab
+        sponsorblock
+      ];
     in
     {
+      nixpkgs.overlays = [ inputs.nur.overlays.default ];
+
+      # librewolf 151.0.2-1 carries an upstream advisory; the home-manager
+      # profile uses the same build, so the allowance moves here with it.
+      nixpkgs.config.permittedInsecurePackages = [
+        "librewolf-151.0.2-1"
+        "librewolf-unwrapped-151.0.2-1"
+      ];
+
+      launchd.user.agents.defaultBrowser = {
+        serviceConfig = {
+          ProgramArguments = [
+            "${pkgs.defaultbrowser}/bin/defaultbrowser"
+            "librewolf"
+          ];
+          RunAtLoad = true;
+          StandardOutPath = "/tmp/defaultbrowser.log";
+          StandardErrorPath = "/tmp/defaultbrowser.log";
+        };
+      };
+
       home-manager.users.${config.system.primaryUser} = {
+        stylix.targets.librewolf = {
+          profileNames = [ "default" ];
+          colorTheme.enable = true;
+        };
+
         programs.librewolf = {
           enable = true;
 
@@ -32,6 +68,12 @@
             "browser.startup.homepage" = "about:home";
             "privacy.donottrackheader.enabled" = true;
             "privacy.resistFingerprinting" = true;
+            "privacy.fingerprintingProtection" = true;
+            "browser.contentblocking.category" = "strict";
+            "network.prefetch-next" = false;
+            # DNS-over-HTTPS forced through Quad9.
+            "network.trr.mode" = 2;
+            "network.trr.uri" = "https://dns.quad9.net/dns-query";
           };
 
           profiles.default = {
@@ -40,17 +82,27 @@
 
             settings = {
               "browser.toolbars.bookmarks.visibility" = "always";
+              "browser.tabs.inTitlebar" = 1;
+
+              # RFP breaks colonist.io's WebGL board;
+              # exempt just that origin. exemptedDomains is inert without the
+              # testGranularityMask gate.
+              "privacy.resistFingerprinting.exemptedDomains" = "colonist.io,*.colonist.io";
+              "privacy.resistFingerprinting.testGranularityMask" = 4;
             };
 
             search = {
               force = true;
-              default = "ddg";
+              default = "policy-Startpage";
+              privateDefault = "policy-Startpage";
             };
 
-            extensions.packages = with firefoxAddons; [
-              ublock-origin
-              bitwarden
-            ];
+            extensions = {
+              # stylix' colorTheme writes Firefox Color settings into this
+              # profile; force lets it own extension settings declaratively.
+              force = true;
+              packages = browserExtensions;
+            };
           };
         };
       };

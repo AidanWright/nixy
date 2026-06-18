@@ -10,9 +10,15 @@
   };
 
   flake.aspects.sops.nixos =
-    { ... }:
+    { pkgs, ... }:
     {
       imports = [ inputs.sops-nix.nixosModules.sops ];
+
+      environment.systemPackages = with pkgs; [  
+        unstable.sops
+        unstable.age
+        unstable.ssh-to-age
+      ];
 
       # Derives the age decryption key from the host's SSH host key so no
       # separate key management is needed.
@@ -23,6 +29,12 @@
     { pkgs, ... }:
     {
       imports = [ inputs.sops-nix.darwinModules.sops ];
+
+      environment.systemPackages = with pkgs; [ 
+        unstable.sops
+        unstable.age
+        unstable.ssh-to-age
+      ];
 
       #sops.age.sshKeyPaths = [ "" ];
     };

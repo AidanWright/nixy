@@ -13,30 +13,11 @@
     }:
     {
       environment.systemPackages = with pkgs; [
-        master.librewolf
         rectangle
         unstable.dorion
-        freetube
         mpv
         syncplay
       ];
-
-      nixpkgs.config.permittedInsecurePackages = [
-        "librewolf-151.0.2-1"
-        "librewolf-unwrapped-151.0.2-1"
-      ];
-
-      launchd.user.agents.defaultBrowser = {
-        serviceConfig = {
-          ProgramArguments = [
-            "${pkgs.defaultbrowser}/bin/defaultbrowser"
-            "librewolf"
-          ];
-          RunAtLoad = true;
-          StandardOutPath = "/tmp/defaultbrowser.log";
-          StandardErrorPath = "/tmp/defaultbrowser.log";
-        };
-      };
 
       launchd.user.agents.wallpaper = {
         serviceConfig = {
@@ -102,12 +83,17 @@
                   { app = "/Users/${primaryUser}/Applications/Home Manager Apps/kitty.app"; }
                 else
                   { app = "/System/Applications/Utilities/Terminal.app"; };
+              browserApp =
+                if config.home-manager.users.${primaryUser}.programs.librewolf.enable then
+                  { app = "/Users/${primaryUser}/Applications/Home Manager Apps/LibreWolf.app"; }
+                else
+                  { app = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"; };
             in
             [
               { app = "/Applications/QSpace Pro.app"; }
               { app = "/System/Applications/Apps.app"; }
               { spacer.small = true; }
-              { app = "/Applications/Nix Apps/LibreWolf.app"; }
+              browserApp
               { app = "/System/Applications/Messages.app"; }
               { app = "/Applications/Trident.app"; }
               spotifyApp

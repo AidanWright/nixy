@@ -16,37 +16,25 @@
           remote-builders
           nix-nvim-overlay
           tart-vm
-          kitty
         ];
 
         darwin =
           { pkgs, ... }:
           {
             environment.systemPackages = with pkgs; [
+              ### essentials
               nvim-pkg
               git
-              unstable.claude-code
               gnupg
               gh
-              unstable.bitwarden-cli
-              unstable.tailscale
+
+              ### nice to have
+              unstable.claude-code
               eza
-              qemu
-              unstable.sops
-              unstable.age
-              unstable.ssh-to-age
+              qemu 
             ];
 
-            services.tailscale.enable = true;
-
-            homebrew = {
-              casks = [
-                "bitwarden"
-                "orbstack"
-                "tailscale-app"
-              ];
-              brews = [ "ccat" ];
-            };
+            homebrew.brews = [ "ccat" ];
 
             environment.variables = {
               EDITOR = "nvim";
@@ -58,11 +46,17 @@
           { pkgs, ... }:
           {
             environment.systemPackages = with pkgs; [
+              ### essentials 
               nvim-pkg
               git
               gnupg
               gh
             ];
+
+            environment.variables = {
+              EDITOR = "nvim";
+              VISUAL = "nvim";
+            };
           };
       };
     };
