@@ -9,7 +9,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  flake.modules.darwin.home-manager =
+  flake.aspects.home-manager.darwin =
     { config, ... }:
     {
       imports = [ inputs.home-manager.darwinModules.home-manager ];

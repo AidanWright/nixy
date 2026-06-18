@@ -8,9 +8,12 @@
   flake-file.inputs.nur = {
     url = "github:nix-community/NUR";
     inputs.nixpkgs.follows = "nixpkgs";
+    # Without this, NUR pulls its own (identical) flake-parts node, which
+    # nix-auto-follow collapses but nix re-expands — breaking check-flake-file.
+    inputs.flake-parts.follows = "flake-parts";
   };
 
-  flake.modules.darwin.librewolf =
+  flake.aspects.librewolf.darwin =
     {
       config,
       pkgs,

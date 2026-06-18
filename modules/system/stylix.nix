@@ -1,4 +1,4 @@
-# modules/system/basic/darwin/stylix.nix
+# modules/system/stylix.nix
 ################################################################################
 # System-wide theming: colour scheme, wallpaper, and fonts.
 ################################################################################
@@ -9,7 +9,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  flake.modules.darwin.stylix =
+  flake.aspects.stylix.darwin =
     { pkgs, lib, ... }:
     {
       imports = [ inputs.stylix.darwinModules.stylix ];

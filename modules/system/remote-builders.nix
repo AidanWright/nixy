@@ -1,4 +1,4 @@
-# modules/system/cli-tools/remote-builders.nix
+# modules/system/remote-builders.nix
 ################################################################################
 # Configures nixbuild.net as a remote builder.
 ################################################################################
@@ -27,7 +27,7 @@ let
   };
 in
 {
-  flake.modules.darwin.remoteBuilders =
+  flake.aspects.remote-builders.darwin =
     { config, lib, ... }:
     lib.mkMerge [
       {
@@ -39,7 +39,7 @@ in
       (lib.mkIf (!config.determinateNix.enable) { nix.settings = builderSettings; })
     ];
 
-  flake.modules.nixos.remoteBuilders =
+  flake.aspects.remote-builders.nixos =
     { ... }:
     {
       programs.ssh.extraConfig = sshConfig;

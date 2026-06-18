@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.stremio =
+  flake.aspects.stremio.darwin =
     { ... }:
     {
       #homebrew.casks = [ "stremio" ];

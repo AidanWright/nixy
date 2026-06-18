@@ -24,11 +24,11 @@
     };
   };
 
-  flake.modules.darwin.nix-nvim-overlay = _: {
+  flake.aspects.nix-nvim-overlay.darwin = _: {
     nixpkgs.overlays = [ inputs.nix-nvim.overlays.default ];
   };
 
-  flake.modules.nixos.nix-nvim-overlay = _: {
+  flake.aspects.nix-nvim-overlay.nixos = _: {
     nixpkgs.overlays = [ inputs.nix-nvim.overlays.default ];
   };
 }

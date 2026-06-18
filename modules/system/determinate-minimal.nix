@@ -1,11 +1,11 @@
-# modules/system/minimal/darwin/determinate-minimal.nix
+# modules/system/determinate-minimal.nix
 ################################################################################
 # Nix settings for darwin hosts using Determinate Nix. Imported by system-minimal
 # when determinateNix.enable = true
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.determinate-minimal =
+  flake.aspects.determinate-minimal.darwin =
     {
       config,
       lib,

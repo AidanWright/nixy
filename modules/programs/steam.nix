@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.steam =
+  flake.aspects.steam.darwin =
     { ... }:
     {
       #homebrew.casks = [ "steam" ];

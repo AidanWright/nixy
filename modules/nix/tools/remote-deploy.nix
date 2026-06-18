@@ -43,7 +43,7 @@
     };
   };
 
-  flake.modules.nixos.remote-deploy =
+  flake.aspects.remote-deploy.nixos =
     { config, pkgs, ... }:
     let
       hostname = config.networking.hostName;

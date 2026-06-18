@@ -4,7 +4,7 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.modules.darwin.macbook-pro =
+  flake.aspects.macbook-pro.darwin =
     { ... }:
     {
       imports = with inputs.self.modules.darwin; [

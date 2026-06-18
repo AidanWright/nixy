@@ -1,4 +1,4 @@
-# modules/system/basic/sops.nix
+# modules/system/sops.nix
 ################################################################################
 # Configures sops-nix for NixOS secrets management.
 ################################################################################
@@ -9,7 +9,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  flake.modules.nixos.sops =
+  flake.aspects.sops.nixos =
     { ... }:
     {
       imports = [ inputs.sops-nix.nixosModules.sops ];
@@ -19,7 +19,7 @@
       sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     };
 
-  flake.modules.darwin.sops =
+  flake.aspects.sops.darwin =
     { pkgs, ... }:
     {
       imports = [ inputs.sops-nix.darwinModules.sops ];

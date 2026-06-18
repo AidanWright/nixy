@@ -1,10 +1,10 @@
-# modules/programs/kitty/kitty.nix
+# modules/programs/kitty.nix
 ################################################################################
 # Configures kitty terminal via home-manager.
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.kitty =
+  flake.aspects.kitty.darwin =
     {
       pkgs,
       config,

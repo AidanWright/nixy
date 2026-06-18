@@ -1,4 +1,4 @@
-# modules/system/basic/darwin/homebrew.nix
+# modules/system/homebrew.nix
 ################################################################################
 # Enables nix-darwin's Homebrew integration so hosts can declare casks and
 # brews declaratively.
@@ -7,12 +7,15 @@
 {
   flake-file.inputs.nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
-  flake.modules.darwin.homebrew =
+  flake.aspects.homebrew.darwin =
     { config, ... }:
     {
       imports = [ inputs.nix-homebrew.darwinModules.nix-homebrew ];
 
       homebrew.enable = true;
+      # Without upgrade, `brew bundle` only installs missing casks; it never
+      # upgrades an already-installed one when its tap declares a newer version.
+      homebrew.onActivation.upgrade = true;
       homebrew.onActivation.cleanup = "zap";
       homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
 

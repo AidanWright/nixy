@@ -1,11 +1,11 @@
-# modules/system/minimal/darwin/lix-minimal.nix
+# modules/system/lix-minimal.nix
 ################################################################################
 # Nix settings for darwin hosts using Lix. Mirrors determinate-minimal.nix
 # but uses standard nix-darwin nix.* options instead of determinateNix.*.
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.lix-minimal =
+  flake.aspects.lix-minimal.darwin =
     {
       config,
       lib,

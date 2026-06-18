@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.modules.nixos.ssh =
+  flake.aspects.ssh.nixos =
     { ... }:
     {
       services.openssh = {

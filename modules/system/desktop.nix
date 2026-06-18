@@ -1,10 +1,10 @@
-# modules/system/basic/darwin/desktop.nix
+# modules/system/desktop.nix
 ################################################################################
 # Desktop appearance: dock, Finder, Stage Manager, and global UI defaults.
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.desktop =
+  flake.aspects.desktop.darwin =
     {
       config,
       pkgs,
@@ -13,12 +13,17 @@
     }:
     {
       environment.systemPackages = with pkgs; [
-        unstable.librewolf
+        master.librewolf
         rectangle
         unstable.dorion
         freetube
         mpv
         syncplay
+      ];
+
+      nixpkgs.config.permittedInsecurePackages = [
+        "librewolf-151.0.2-1"
+        "librewolf-unwrapped-151.0.2-1"
       ];
 
       launchd.user.agents.defaultBrowser = {

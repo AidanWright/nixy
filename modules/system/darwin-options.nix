@@ -1,4 +1,4 @@
-# modules/system/basic/darwin/darwin-options.nix
+# modules/system/darwin-options.nix
 ################################################################################
 # Clean option interfaces for macOS settings whose raw defaults keys or values
 # are not self-documenting. desktop.nix and basic.nix set options.darwin.*;
@@ -6,7 +6,7 @@
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.darwinOptions =
+  flake.aspects.darwin-options.darwin =
     { lib, config, ... }:
     let
       cfg = config.darwin;

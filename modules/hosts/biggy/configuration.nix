@@ -4,7 +4,7 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.modules.nixos.biggy =
+  flake.aspects.biggy.nixos =
     { ... }:
     {
       imports =

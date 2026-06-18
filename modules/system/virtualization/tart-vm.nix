@@ -16,7 +16,7 @@
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.tartVm =
+  flake.aspects.tart-vm.darwin =
     {
       config,
       pkgs,

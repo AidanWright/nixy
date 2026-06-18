@@ -1,10 +1,10 @@
-# modules/system/cli-tools/cachix.nix
+# modules/system/cachix.nix
 ################################################################################
 # Configures additional binary caches.
 ################################################################################
 { ... }:
 {
-  flake.modules.darwin.cachix =
+  flake.aspects.cachix.darwin =
     {
       pkgs,
       config,
@@ -29,7 +29,7 @@
       (lib.mkIf (!config.determinateNix.enable) { nix.settings = caches; })
     ];
 
-  flake.modules.nixos.cachix =
+  flake.aspects.cachix.nixos =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.cachix ];

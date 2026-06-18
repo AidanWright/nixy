@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.modules.nixos.tailscale =
+  flake.aspects.tailscale.nixos =
     { config, ... }:
     {
       services.tailscale = {

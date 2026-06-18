@@ -10,7 +10,7 @@
     inputs.systems.follows = "systems";
   };
 
-  flake.modules.darwin.spotify =
+  flake.aspects.spotify.darwin =
     { pkgs, ... }:
     let
       spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};

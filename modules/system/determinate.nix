@@ -13,7 +13,7 @@
     inputs.nix.inputs.flake-parts.follows = "flake-parts";
   };
 
-  flake.modules.darwin.determinate =
+  flake.aspects.determinate.darwin =
     { ... }:
     {
       imports = [ inputs.determinate.darwinModules.default ];
@@ -21,7 +21,7 @@
       determinateNix.enable = true;
     };
 
-  flake.modules.nixos.determinate =
+  flake.aspects.determinate.nixos =
     { ... }:
     {
       imports = [ inputs.determinate.nixosModules.default ];
