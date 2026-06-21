@@ -4,28 +4,26 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.tailscale =
-    { ... }:
-    {
-      darwin = 
-        { pkgs, ... }:
-        {
-          environment.systemPackages = with pkgs; [ 
-            unstable.tailscale
-          ];
-      
-          homebrew.casks = [ "tailscale-app" ];
+  flake.aspects.tailscale = {
+    darwin =
+      { pkgs, ... }:
+      {
+        environment.systemPackages = with pkgs; [
+          unstable.tailscale
+        ];
 
-          services.tailscale.enable = true; 
-        };
+        homebrew.casks = [ "tailscale-app" ];
 
-      nixos =
-        { config, ... }:
-        {
-          services.tailscale = {
-            enable = true;
-            authKeyFile = config.sops.secrets.tailscale-auth-key.path;
-          };
+        services.tailscale.enable = true;
+      };
+
+    nixos =
+      { config, ... }:
+      {
+        services.tailscale = {
+          enable = true;
+          authKeyFile = config.sops.secrets.tailscale-auth-key.path;
         };
-    };
+      };
+  };
 }
