@@ -1,4 +1,4 @@
-# modules/system/cli-tools.nix
+# modules/system/dev/cli-tools.nix
 ################################################################################
 # CLI tools, developer utilities, and build infrastructure for all hosts.
 ################################################################################
@@ -24,6 +24,7 @@
             environment.systemPackages = with pkgs; [
               ### essentials
               nvim-pkg
+              ripgrep
               git
               gnupg
               gh
@@ -31,7 +32,7 @@
               ### nice to have
               unstable.claude-code
               eza
-              qemu 
+              qemu
             ];
 
             homebrew.brews = [ "ccat" ];
@@ -46,7 +47,7 @@
           { pkgs, ... }:
           {
             environment.systemPackages = with pkgs; [
-              ### essentials 
+              ### essentials
               nvim-pkg
               git
               gnupg
