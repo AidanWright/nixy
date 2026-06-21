@@ -10,6 +10,8 @@
       imports = with inputs.self.modules.darwin; [
         basic
         cli-tools
+        desktop-tools
+        tailscale
         desktop
         office
         spotify
