@@ -17,11 +17,11 @@ in
 {
   flake-file.inputs.nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
-  flake.aspects.master-overlay.darwin = _: {
+  flake.aspects.overlays.master.darwin = _: {
     nixpkgs.overlays = [ masterOverlay ];
   };
 
-  flake.aspects.master-overlay.nixos = _: {
+  flake.aspects.overlays.master.nixos = _: {
     nixpkgs.overlays = [ masterOverlay ];
   };
 }

@@ -21,7 +21,7 @@
         modules = [
           inputs.self.modules.nixos.${name}
           inputs.self.modules.nixos.unstable-overlay
-          inputs.self.modules.nixos.master-overlay
+          inputs.self.modules.nixos."overlays.master"
           inputs.self.modules.nixos.minimal
           inputs.self.modules.nixos.remote-deploy
           { nixpkgs.hostPlatform = lib.mkDefault system; }
@@ -34,7 +34,7 @@
         modules = [
           inputs.self.modules.darwin.${name}
           inputs.self.modules.darwin.unstable-overlay
-          inputs.self.modules.darwin.master-overlay
+          inputs.self.modules.darwin."overlays.master"
           inputs.self.modules.darwin.minimal
           { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
