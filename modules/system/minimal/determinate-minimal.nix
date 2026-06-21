@@ -1,4 +1,4 @@
-# modules/system/determinate-minimal.nix
+# modules/system/minimal/determinate-minimal.nix
 ################################################################################
 # Nix settings for darwin hosts using Determinate Nix. Imported by system-minimal
 # when determinateNix.enable = true

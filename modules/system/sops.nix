@@ -14,7 +14,7 @@
     {
       imports = [ inputs.sops-nix.nixosModules.sops ];
 
-      environment.systemPackages = with pkgs; [  
+      environment.systemPackages = with pkgs; [
         unstable.sops
         unstable.age
         unstable.ssh-to-age
@@ -30,7 +30,7 @@
     {
       imports = [ inputs.sops-nix.darwinModules.sops ];
 
-      environment.systemPackages = with pkgs; [ 
+      environment.systemPackages = with pkgs; [
         unstable.sops
         unstable.age
         unstable.ssh-to-age

@@ -1,4 +1,4 @@
-# modules/system/cli-tools.nix
+# modules/system/dev/desktop-tools.nix
 ################################################################################
 # CLI tools, developer utilities, and build infrastructure for all hosts.
 ################################################################################

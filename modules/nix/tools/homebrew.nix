@@ -1,4 +1,4 @@
-# modules/system/homebrew.nix
+# modules/nix/tools/homebrew.nix
 ################################################################################
 # Enables nix-darwin's Homebrew integration so hosts can declare casks and
 # brews declaratively.

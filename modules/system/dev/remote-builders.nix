@@ -1,4 +1,4 @@
-# modules/system/remote-builders.nix
+# modules/system/dev/remote-builders.nix
 ################################################################################
 # Configures nixbuild.net as a remote builder.
 ################################################################################

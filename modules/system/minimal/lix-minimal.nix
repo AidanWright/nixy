@@ -1,4 +1,4 @@
-# modules/system/lix-minimal.nix
+# modules/system/minimal/lix-minimal.nix
 ################################################################################
 # Nix settings for darwin hosts using Lix. Mirrors determinate-minimal.nix
 # but uses standard nix-darwin nix.* options instead of determinateNix.*.

@@ -1,4 +1,4 @@
-# modules/system/basic.nix
+# modules/system/basic/basic.nix
 ################################################################################
 # Basic system settings: power management, input devices, privacy, and search.
 ################################################################################

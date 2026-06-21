@@ -1,4 +1,4 @@
-# modules/system/desktop.nix
+# modules/system/basic/desktop.nix
 ################################################################################
 # Desktop appearance: dock, Finder, Stage Manager, and global UI defaults.
 ################################################################################

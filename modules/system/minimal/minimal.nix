@@ -1,4 +1,4 @@
-# modules/system/minimal.nix
+# modules/system/minimal/minimal.nix
 ################################################################################
 # Common minimal settings for all configurations. Each class imports the
 # Nix-implementation-specific minimal modules it needs.

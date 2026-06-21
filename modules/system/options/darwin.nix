@@ -1,4 +1,4 @@
-# modules/system/darwin-options.nix
+# modules/system/options/darwin.nix
 ################################################################################
 # Clean option interfaces for macOS settings whose raw defaults keys or values
 # are not self-documenting. desktop.nix and basic.nix set options.darwin.*;

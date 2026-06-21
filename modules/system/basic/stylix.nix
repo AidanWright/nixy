@@ -1,4 +1,4 @@
-# modules/system/stylix.nix
+# modules/system/basic/stylix.nix
 ################################################################################
 # System-wide theming: colour scheme, wallpaper, and fonts.
 ################################################################################

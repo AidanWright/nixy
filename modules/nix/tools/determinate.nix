@@ -1,4 +1,4 @@
-# modules/system/determinate.nix
+# modules/nix/tools/determinate.nix
 ################################################################################
 # Enables Determinate Nix for darwin and NixOS configurations.
 # See: https://docs.determinate.systems/guides/nix-darwin/
