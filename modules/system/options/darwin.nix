@@ -6,7 +6,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.darwin-options.darwin =
+  flake.aspects.options.base.darwin =
     { lib, config, ... }:
     let
       cfg = config.darwin;

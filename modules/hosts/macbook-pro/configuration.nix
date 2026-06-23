@@ -9,6 +9,8 @@
     {
       imports = with inputs.self.modules.darwin; [
         basic
+        hardening
+        aidanwright
         cli-tools
         desktop-tools
         tailscale

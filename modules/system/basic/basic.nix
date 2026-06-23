@@ -12,7 +12,8 @@
     {
       basic = {
         includes = with aspects; [
-          darwin-options
+          admin
+          options.base
           determinate
           homebrew
           home-manager
@@ -64,19 +65,9 @@
                   "developer"
                 ];
               };
-
-              siri = {
-                enable = false;
-                enableAppleIntelligence = false;
-              };
             };
 
             system.defaults.hitoolbox.AppleFnUsageType = "Show Emoji & Symbols";
-
-            networking.applicationFirewall = {
-              enable = true;
-              allowSignedApp = true;
-            };
           };
       };
     };
