@@ -11,17 +11,18 @@ let
     let
       provided = if lib.isFunction provider then provider { inherit aspect-chain class; } else provider;
     in
-    inner class aspect-chain provided;
+    # Included aspects come from the `aspects` fixpoint, which stamps each one's
+    # `name` with its full dotted path; that path becomes the dedup key.
+    inner class aspect-chain (provided.name or null) provided;
 
   # A stable key per (aspect, class) lets the module system dedupe an aspect
   # reached through several `includes` paths (a diamond: A includes B and C, and
-  # B also includes C). Without it each resolution is an anonymous module with a
-  # fresh key, so C's options get declared — and its config applied — once per
-  # path, which errors on "already declared". Bare providers without a name keep
-  # the old (un-keyed) behaviour.
+  # B also includes C). The key is the aspect's full namespace path, so two
+  # aspects that merely share a leaf name (e.g. options.base and minimal.base) do
+  # not collide. Bare providers without a name keep the old (un-keyed) behaviour.
   inner =
-    class: aspect-chain: provided:
-    lib.optionalAttrs (provided ? name) { key = "flake-aspect:${class}:${provided.name}"; }
+    class: aspect-chain: name: provided:
+    lib.optionalAttrs (name != null) { key = "flake-aspect:${class}:${name}"; }
     // {
       imports =
         let
@@ -35,10 +36,10 @@ let
     };
 
   resolve =
-    class: aspect-chain: aspect:
+    class: aspect-chain: name: aspect:
     let
       provided = if lib.isFunction aspect then aspect { inherit class aspect-chain; } else aspect;
     in
-    inner class aspect-chain provided;
+    inner class aspect-chain name provided;
 in
 resolve

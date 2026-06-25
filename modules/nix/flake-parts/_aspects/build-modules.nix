@@ -49,11 +49,18 @@ let
               path = joinPath prefix name;
             in
             if isAspectNode value then
-              lib.optional (value ? ${class}) (lib.nameValuePair path (value.resolve { inherit class; }))
+              lib.optional (value ? ${class}) (
+                lib.nameValuePair path (
+                  value.resolve {
+                    inherit class;
+                    name = path;
+                  }
+                )
+              )
             else
               collect path value
               ++ lib.optional (namespaceHasClass class value) (
-                lib.nameValuePair "${path}.${reservedName}" (allModuleFor class value)
+                lib.nameValuePair "${path}.${reservedName}" (allModuleFor path class value)
               )
           ) (childrenOf node)
         );

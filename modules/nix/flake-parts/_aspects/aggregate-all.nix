@@ -5,6 +5,8 @@
 # build-modules.nix bakes `all` into the flake.modules output; aspect-type.nix
 # injects it into the `aspects` fixpoint so `includes = [ ns.all ]` works too.
 # Both derive `all` from the real descendant aspects, never from a nested `all`.
+# Every aspect is resolved under its full dotted path so dedup keys stay
+# namespace-unique (leaves may repeat across namespaces).
 ################################################################################
 lib:
 let
@@ -15,52 +17,93 @@ let
   # The module system adds `_module`; it is never an aspect or a namespace.
   childrenOf = node: removeAttrs node [ "_module" ];
 
-  descendantAspects =
-    node:
+  joinPath = prefix: name: if prefix == "" then name else "${prefix}.${name}";
+
+  # Every descendant aspect paired with its full dotted path.
+  descendantAspectsWithPath =
+    prefix: node:
     lib.concatLists (
       lib.mapAttrsToList (
-        _: value:
+        name: value:
+        let
+          path = joinPath prefix name;
+        in
         if isAspectNode value then
-          [ value ]
+          [
+            {
+              aspect = value;
+              inherit path;
+            }
+          ]
         else if lib.isAttrs value then
-          descendantAspects value
+          descendantAspectsWithPath path value
         else
           [ ]
       ) (childrenOf node)
     );
+
+  descendantAspects = node: map (entry: entry.aspect) (descendantAspectsWithPath "" node);
 
   # Aspects beneath `node` that actually define `class` (skip e.g. nixos-only
   # aspects when building the darwin tree).
   descendantsOfClass = class: node: lib.filter (aspect: aspect ? ${class}) (descendantAspects node);
   namespaceHasClass = class: node: descendantsOfClass class node != [ ];
 
-  allModuleFor = class: node: {
-    imports = map (aspect: aspect.resolve { inherit class; }) (descendantsOfClass class node);
+  # `<namespace>.all`: import every descendant aspect that defines `class`,
+  # each resolved under its full path (`prefix.<leaf>`) so its dedup key is
+  # namespace-unique.
+  allModuleFor = prefix: class: node: {
+    imports = lib.concatMap (
+      { aspect, path }:
+      lib.optional (aspect ? ${class}) (
+        aspect.resolve {
+          inherit class;
+          name = path;
+        }
+      )
+    ) (descendantAspectsWithPath prefix node);
   };
 
+  # The fixpoint's `<namespace>.all` provider. It delegates to the already-built
+  # `flake.modules.<class>."<prefix>.all"` (computed by build-modules via
+  # `allModuleFor`), so `includes = [ ns.all ]` reuses the exact module the rest
+  # of the system imports — instead of re-resolving inside the fixpoint, which
+  # evaluates incorrectly in that self-referential context.
   allProvider =
-    node:
+    prefix: builtModules:
     {
       class,
       aspect-chain ? [ ],
     }:
     {
-      ${class} = allModuleFor class node;
+      # Named so `include` keys this `.all` wrapper uniquely; without a key the
+      # module system dedupes several keyless `.all` wrappers in one `includes`
+      # list down to the first, silently dropping the rest.
+      name = joinPath prefix reservedName;
+      ${class} = builtModules.${class}."${joinPath prefix reservedName}" or { };
     };
 
+  # The `aspects` fixpoint handed to definitions: stamp each aspect with its
+  # full-path `name` (so `includes` resolution keys it by namespace, not leaf)
+  # and add each namespace's synthesized `all` (delegating to `builtModules`).
+  # The root has no `all`.
   augmentFixpoint =
-    tree:
+    builtModules: tree:
     let
       go =
-        isRoot: node:
+        isRoot: prefix: node:
         let
-          rebuilt = lib.mapAttrs (_: value: if isAspectNode value then value else go false value) (
-            childrenOf node
-          );
+          rebuilt = lib.mapAttrs (
+            name: value:
+            let
+              path = joinPath prefix name;
+            in
+            if isAspectNode value then value // { name = path; } else go false path value
+          ) (childrenOf node);
         in
-        if isRoot then rebuilt else rebuilt // { ${reservedName} = allProvider node; };
+        if isRoot then rebuilt else rebuilt // { ${reservedName} = allProvider prefix builtModules; };
     in
-    go true tree;
+    go true "" tree;
 
   assertNoReserved =
     tree:
@@ -90,6 +133,7 @@ in
     isAspectNode
     childrenOf
     descendantAspects
+    descendantsOfClass
     namespaceHasClass
     allModuleFor
     augmentFixpoint

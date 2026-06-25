@@ -143,8 +143,11 @@ let
             {
               class,
               aspect-chain ? [ ],
+              # Callers pass the aspect's full dotted path; the leaf-named default
+              # is only a fallback for direct, un-namespaced resolution.
+              name ? config.name,
             }:
-            resolve class aspect-chain (config {
+            resolve class aspect-chain name (config {
               inherit class aspect-chain;
             })
           );
@@ -172,13 +175,15 @@ let
       m: if builtins.isFunction m then isSubmoduleFn m else isAspectShaped m
     )) (lib.types.either (providerFn cnf) (lib.types.lazyAttrsOf (aspectTreeElem cnf)));
 
+  # The `aspects` fixpoint arg (with each namespace's `all`) is injected from
+  # flake-module.nix, where the built flake.modules are available for `all` to
+  # delegate to. The type only declares the tree shape.
   aspectsType =
     cnf:
     lib.types.submodule (
-      { config, ... }:
+      { ... }:
       {
         freeformType = lib.types.lazyAttrsOf (aspectTreeElem cnf);
-        config._module.args.aspects = (import ./aggregate-all.nix lib).augmentFixpoint config;
       }
     );
 
