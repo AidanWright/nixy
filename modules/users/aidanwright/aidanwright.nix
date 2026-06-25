@@ -23,11 +23,11 @@
             inputs.self.modules.homeManager."options.dock"
             inputs.self.modules.homeManager."programs.claude"
             inputs.self.modules.homeManager."programs.spotify"
+            inputs.self.modules.homeManager."programs.dorion"
           ];
 
           home.packages = with pkgs; [
             rectangle
-            unstable.dorion
             mpv
             syncplay
             darwinApps.cryptomator
