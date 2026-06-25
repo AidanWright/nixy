@@ -10,6 +10,8 @@
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 
   inputs = {
+    claude-code-nix.url = "github:sadjow/claude-code-nix";
+
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
       inputs = {
@@ -44,6 +46,11 @@
     };
 
     import-tree.url = "github:vic/import-tree";
+
+    mcp-servers-nix = {
+      url = "github:natsukium/mcp-servers-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-auto-follow = {
       url = "github:AidanWright/nix-auto-follow/feat/ignore-inputs";
