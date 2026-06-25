@@ -30,6 +30,7 @@
             unstable.dorion
             mpv
             syncplay
+            darwinApps.cryptomator
           ];
 
           dock = {

@@ -34,8 +34,6 @@
               qemu
             ];
 
-            homebrew.brews = [ "ccat" ];
-
             environment.variables = {
               EDITOR = "nvim";
               VISUAL = "nvim";

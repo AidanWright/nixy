@@ -1,8 +1,8 @@
 # modules/programs/claude.nix
 ################################################################################
-# Claude tooling. The claude-code CLI (from sadjow/claude-code-nix) with
-# pre-configured MCP servers ships as a home-manager aspect; the Claude desktop
-# app ships as a system Homebrew cask.
+# Claude tooling, scoped to the user that imports it. The claude-code CLI (from
+# sadjow/claude-code-nix) ships with pre-configured MCP servers, and the Claude
+# desktop app is installed from its official release via pkgs.darwinApps.
 ################################################################################
 { inputs, ... }:
 {
@@ -14,40 +14,34 @@
     };
   };
 
-  flake.aspects.programs.claude = {
-    homeManager =
-      { pkgs, ... }:
-      {
-        imports = [ inputs.mcp-servers-nix.homeManagerModules.default ];
+  flake.aspects.programs.claude.homeManager =
+    { pkgs, ... }:
+    {
+      imports = [ inputs.mcp-servers-nix.homeManagerModules.default ];
 
-        mcp-servers.programs = {
-          filesystem = {
-            enable = true;
-            args = [
-              "/etc/nix-darwin"
-              "/Users/aidanwright/Library/CloudStorage/ZohoWorkDriveTrueSync-AidanWright/General/Code"
-            ];
-          };
-          fetch.enable = true;
-          git.enable = true;
-          memory.enable = true;
-          sequential-thinking.enable = true;
-          nixos.enable = true;
-        };
+      home.packages = [ pkgs.darwinApps.claude-desktop ];
 
-        programs.mcp.enable = true;
-
-        programs.claude-code = {
+      mcp-servers.programs = {
+        filesystem = {
           enable = true;
-          enableMcpIntegration = true;
-          package = inputs.claude-code-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+          args = [
+            "/etc/nix-darwin"
+            "/Users/aidanwright/Library/CloudStorage/ZohoWorkDriveTrueSync-AidanWright/General/Code"
+          ];
         };
+        fetch.enable = true;
+        git.enable = true;
+        memory.enable = true;
+        sequential-thinking.enable = true;
+        nixos.enable = true;
       };
 
-    darwin =
-      { ... }:
-      {
-        homebrew.casks = [ "claude" ];
+      programs.mcp.enable = true;
+
+      programs.claude-code = {
+        enable = true;
+        enableMcpIntegration = true;
+        package = inputs.claude-code-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
       };
-  };
+    };
 }

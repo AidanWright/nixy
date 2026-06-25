@@ -22,6 +22,8 @@
               unstable.bitwarden-cli
             ];
 
+            # bitwarden stays on Homebrew: the nixpkgs bitwarden-desktop is pinned
+            # to an EOL Electron, undesirable for a password manager.
             homebrew.casks = [
               "bitwarden"
               "orbstack"

@@ -11,8 +11,10 @@
         includes = with aspects; [ options.base ];
 
         darwin =
-          { config, ... }:
+          { config, pkgs, ... }:
           {
+            environment.systemPackages = [ pkgs.darwinApps.dockdoor ];
+
             launchd.user.agents.wallpaper = {
               serviceConfig = {
                 ProgramArguments = [
@@ -27,9 +29,7 @@
             };
 
             homebrew.casks = [
-              "dockdoor"
               "qspace-pro"
-              "cryptomator"
             ];
 
             darwin = {

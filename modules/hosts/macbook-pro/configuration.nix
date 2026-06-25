@@ -14,6 +14,7 @@
           homebrew
           home-manager
           hardening
+          overlays.darwin-apps
           dev.all
           services.tailscale
           programs.all
