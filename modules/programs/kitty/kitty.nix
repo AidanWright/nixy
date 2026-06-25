@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.kitty.darwin =
+  flake.aspects.programs.kitty.darwin =
     {
       pkgs,
       config,
@@ -12,7 +12,6 @@
       ...
     }:
     {
-      #environment.systemPackages = [ pkgs.kitty ];
       home-manager.users.${config.system.primaryUser} = {
         programs.kitty = {
           enable = true;

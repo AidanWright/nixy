@@ -13,7 +13,7 @@
     inputs.flake-parts.follows = "flake-parts";
   };
 
-  flake.aspects.librewolf.darwin =
+  flake.aspects.programs.librewolf.darwin =
     {
       config,
       pkgs,

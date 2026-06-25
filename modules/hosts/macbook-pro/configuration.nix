@@ -2,25 +2,30 @@
 ################################################################################
 # macbook-pro host configuration.
 ################################################################################
-{ inputs, ... }:
+{ ... }:
 {
-  flake.aspects.macbook-pro.darwin =
-    { ... }:
+  flake.aspects =
+    { aspects, ... }:
     {
-      imports = with inputs.self.modules.darwin; [
-        basic
-        hardening
-        aidanwright
-        cli-tools
-        desktop-tools
-        tailscale
-        desktop
-        office
-        spotify
-        steam
-        stremio
-      ];
-      networking.hostName = "macbook-pro";
-      system.primaryUser = "aidanwright";
+      macbook-pro = {
+        includes = with aspects; [
+          basic.all
+          determinate
+          homebrew
+          home-manager
+          hardening
+          dev.all
+          services.tailscale
+          programs.all
+          users.aidanwright
+        ];
+
+        darwin =
+          { ... }:
+          {
+            networking.hostName = "macbook-pro";
+            system.primaryUser = "aidanwright";
+          };
+      };
     };
 }

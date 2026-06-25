@@ -12,7 +12,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  flake.aspects.nixos-shell.nixos =
+  flake.aspects.virt.nixos-shell.nixos =
     { inputs, ... }:
     {
       imports = [ inputs.nixos-shell.nixosModules.nixos-shell ];

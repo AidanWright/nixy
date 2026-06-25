@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.tailscale = {
+  flake.aspects.services.tailscale = {
     darwin =
       { pkgs, ... }:
       {

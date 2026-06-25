@@ -10,9 +10,9 @@
       ...
     }:
     {
-      desktop-tools = {
+      dev.desktop-tools = {
         includes = with aspects; [
-          kitty
+          programs.kitty
         ];
 
         darwin =

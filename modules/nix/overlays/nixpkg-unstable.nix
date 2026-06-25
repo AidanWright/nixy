@@ -25,11 +25,11 @@ in
       };
     };
 
-  flake.aspects.unstable-overlay.darwin = _: {
+  flake.aspects.overlays.unstable.darwin = _: {
     nixpkgs.overlays = [ unstableOverlay ];
   };
 
-  flake.aspects.unstable-overlay.nixos = _: {
+  flake.aspects.overlays.unstable.nixos = _: {
     nixpkgs.overlays = [ unstableOverlay ];
   };
 }

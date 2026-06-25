@@ -5,7 +5,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.determinate-minimal.darwin =
+  flake.aspects.minimal.determinate.darwin =
     {
       config,
       lib,

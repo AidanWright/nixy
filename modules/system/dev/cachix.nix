@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.cachix.darwin =
+  flake.aspects.dev.cachix.darwin =
     {
       pkgs,
       config,
@@ -29,7 +29,7 @@
       (lib.mkIf (!config.determinateNix.enable) { nix.settings = caches; })
     ];
 
-  flake.aspects.cachix.nixos =
+  flake.aspects.dev.cachix.nixos =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.cachix ];

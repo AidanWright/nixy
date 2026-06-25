@@ -10,12 +10,12 @@
       ...
     }:
     {
-      cli-tools = {
+      dev.cli-tools = {
         includes = with aspects; [
-          cachix
-          remote-builders
-          nix-nvim-overlay
-          tart-vm
+          dev.cachix
+          dev.remote-builders
+          overlays.nvim
+          virt.tart-vm
         ];
 
         darwin =
@@ -30,7 +30,6 @@
               gh
 
               ### nice to have
-              unstable.claude-code
               eza
               qemu
             ];

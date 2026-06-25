@@ -26,7 +26,7 @@
     }
   );
 
-  flake.aspects.minimal = {
+  flake.aspects.minimal.base = {
     darwin =
       {
         pkgs,
@@ -34,9 +34,9 @@
         ...
       }:
       {
-        imports = with inputs.self.modules.darwin; [
-          determinate-minimal
-          lix-minimal
+        imports = [
+          inputs.self.modules.darwin."minimal.determinate"
+          inputs.self.modules.darwin."minimal.lix"
         ];
 
         # where we update the registry to include our unfree-nixpkgs
@@ -71,9 +71,9 @@
     nixos =
       { pkgs, ... }:
       {
-        imports = with inputs.self.modules.nixos; [
-          cli-tools
-          sops
+        imports = [
+          inputs.self.modules.nixos."dev.cli-tools"
+          inputs.self.modules.nixos.sops
         ];
 
         nix.settings.experimental-features = [

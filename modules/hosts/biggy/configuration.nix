@@ -4,46 +4,50 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.aspects.biggy.nixos =
-    { ... }:
+  flake.aspects =
+    { aspects, ... }:
     {
-      imports =
-        (with inputs.self.modules.nixos; [
-          tailscale
-          ssh
-          nginx
-        ])
-        ++ [ inputs.disko.nixosModules.disko ];
+      biggy = {
+        includes = with aspects; [
+          services.all
+        ];
 
-      networking.hostName = "biggy";
+        nixos =
+          { ... }:
+          {
+            imports = [ inputs.disko.nixosModules.disko ];
 
-      sops.secrets.tailscale-auth-key.sopsFile = ./tailscale-auth-key.yaml;
+            networking.hostName = "biggy";
 
-      disko.devices.disk.main = {
-        device = "/dev/vda";
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            ESP = {
-              size = "512M";
-              type = "EF00";
+            sops.secrets.tailscale-auth-key.sopsFile = ./tailscale-auth-key.yaml;
+
+            disko.devices.disk.main = {
+              device = "/dev/vda";
+              type = "disk";
               content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-              };
-            };
-            root = {
-              size = "100%";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/";
+                type = "gpt";
+                partitions = {
+                  ESP = {
+                    size = "512M";
+                    type = "EF00";
+                    content = {
+                      type = "filesystem";
+                      format = "vfat";
+                      mountpoint = "/boot";
+                    };
+                  };
+                  root = {
+                    size = "100%";
+                    content = {
+                      type = "filesystem";
+                      format = "ext4";
+                      mountpoint = "/";
+                    };
+                  };
+                };
               };
             };
           };
-        };
       };
     };
 }

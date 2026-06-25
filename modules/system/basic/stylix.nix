@@ -9,7 +9,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  flake.aspects.stylix.darwin =
+  flake.aspects.basic.stylix.darwin =
     { pkgs, lib, ... }:
     {
       imports = [ inputs.stylix.darwinModules.stylix ];

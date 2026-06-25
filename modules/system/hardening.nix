@@ -146,9 +146,8 @@
               /usr/bin/AssetCacheManagerUtil deactivate || true
               /usr/sbin/cupsctl --no-share-printers || true
 
-              # Power Nap / wake-on-network off.
+              # Power Nap / wake-on-network off (womp == wake-on-network-access).
               /usr/bin/pmset -a womp 0 || true
-              /usr/sbin/systemsetup -setwakeonnetworkaccess off || true
 
               # Touch ID: fall back to the password after 30 min (default is 2 days).
               /usr/bin/bioutil -w -s --btimeout 1800 || true

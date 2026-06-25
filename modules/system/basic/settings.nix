@@ -1,24 +1,14 @@
-# modules/system/basic/basic.nix
+# modules/system/basic/settings.nix
 ################################################################################
 # Basic system settings: power management, input devices, privacy, and search.
 ################################################################################
 { ... }:
 {
   flake.aspects =
+    { aspects, ... }:
     {
-      aspects,
-      ...
-    }:
-    {
-      basic = {
-        includes = with aspects; [
-          admin
-          options.base
-          determinate
-          homebrew
-          home-manager
-          stylix
-        ];
+      basic.settings = {
+        includes = with aspects; [ options.base ];
 
         darwin =
           { ... }:

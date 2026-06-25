@@ -1,14 +1,14 @@
 # modules/users/aidanwright/aidanwright.nix
 ################################################################################
 # The primary (daily) user. Owns the account record plus aidanwright's
-# home-manager setup: the per-user Dock (via the `dock` homeManager aspect) and
-# user-facing apps. Program configs (kitty, librewolf, ssh) still attach to this
-# user from their own aspects via `home-manager.users.${primaryUser}` and merge
-# in; migrating them into here as homeManager aspects is a later step.
+# home-manager setup: the per-user Dock and the claude/spotify homeManager
+# aspects, alongside user-facing apps. System program configs (kitty, librewolf,
+# ssh) attach to this user from their own aspects via
+# `home-manager.users.${primaryUser}` and merge in.
 ################################################################################
 { inputs, ... }:
 {
-  flake.aspects.aidanwright.darwin =
+  flake.aspects.users.aidanwright.darwin =
     { ... }:
     {
       home-manager.users.aidanwright =
@@ -19,9 +19,12 @@
           ...
         }:
         {
-          imports = [ inputs.self.modules.homeManager.dock ];
+          imports = [
+            inputs.self.modules.homeManager."options.dock"
+            inputs.self.modules.homeManager."programs.claude"
+            inputs.self.modules.homeManager."programs.spotify"
+          ];
 
-          # User-facing apps (moved off the system package set).
           home.packages = with pkgs; [
             rectangle
             unstable.dorion
@@ -41,10 +44,8 @@
 
             persistent-apps =
               let
-                # spicetify lives in the darwin (os) config; kitty/librewolf are
-                # this user's home-manager config.
                 spotifyApp =
-                  if osConfig.programs ? spicetify then
+                  if config.programs ? spicetify then
                     { app = "/Applications/Nix Apps/Spotify.app"; }
                   else
                     { app = "/System/Applications/Music.app"; };

@@ -8,7 +8,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.dock.homeManager =
+  flake.aspects.options.dock.homeManager =
     {
       config,
       lib,

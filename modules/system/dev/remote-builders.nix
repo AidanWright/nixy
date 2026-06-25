@@ -27,7 +27,7 @@ let
   };
 in
 {
-  flake.aspects.remote-builders.darwin =
+  flake.aspects.dev.remote-builders.darwin =
     { config, lib, ... }:
     lib.mkMerge [
       {
@@ -39,7 +39,7 @@ in
       (lib.mkIf (!config.determinateNix.enable) { nix.settings = builderSettings; })
     ];
 
-  flake.aspects.remote-builders.nixos =
+  flake.aspects.dev.remote-builders.nixos =
     { ... }:
     {
       programs.ssh.extraConfig = sshConfig;

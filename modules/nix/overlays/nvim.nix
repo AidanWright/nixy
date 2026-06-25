@@ -6,11 +6,11 @@
 {
   flake-file.inputs.nix-nvim.url = "https://flakehub.com/f/AidanWright/nix-nvim/*";
 
-  flake.aspects.nix-nvim-overlay.darwin = _: {
+  flake.aspects.overlays.nvim.darwin = _: {
     nixpkgs.overlays = [ inputs.nix-nvim.overlays.default ];
   };
 
-  flake.aspects.nix-nvim-overlay.nixos = _: {
+  flake.aspects.overlays.nvim.nixos = _: {
     nixpkgs.overlays = [ inputs.nix-nvim.overlays.default ];
   };
 }

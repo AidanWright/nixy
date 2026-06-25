@@ -5,7 +5,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.lix-minimal.darwin =
+  flake.aspects.minimal.lix.darwin =
     {
       config,
       lib,

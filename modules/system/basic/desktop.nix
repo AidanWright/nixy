@@ -4,94 +4,102 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.desktop.darwin =
-    { config, ... }:
+  flake.aspects =
+    { aspects, ... }:
     {
-      launchd.user.agents.wallpaper = {
-        serviceConfig = {
-          ProgramArguments = [
-            "/usr/bin/osascript"
-            "-e"
-            ''tell application "System Events" to tell every desktop to set picture to "${config.stylix.image}"''
-          ];
-          RunAtLoad = true;
-          StandardOutPath = "/tmp/wallpaper.log";
-          StandardErrorPath = "/tmp/wallpaper.log";
-        };
-      };
+      basic.desktop = {
+        includes = with aspects; [ options.base ];
 
-      homebrew.casks = [
-        "dockdoor"
-        "qspace-pro"
-        "cryptomator"
-      ];
+        darwin =
+          { config, ... }:
+          {
+            launchd.user.agents.wallpaper = {
+              serviceConfig = {
+                ProgramArguments = [
+                  "/usr/bin/osascript"
+                  "-e"
+                  ''tell application "System Events" to tell every desktop to set picture to "${config.stylix.image}"''
+                ];
+                RunAtLoad = true;
+                StandardOutPath = "/tmp/wallpaper.log";
+                StandardErrorPath = "/tmp/wallpaper.log";
+              };
+            };
 
-      darwin = {
-        hotCorners = {
-          topLeft = "disabled";
-          topRight = "disabled";
-          bottomLeft = "desktop";
-          bottomRight = "lockScreen";
-        };
+            homebrew.casks = [
+              "dockdoor"
+              "qspace-pro"
+              "cryptomator"
+            ];
 
-        finder.defaultView = "list";
+            darwin = {
+              hotCorners = {
+                topLeft = "disabled";
+                topRight = "disabled";
+                bottomLeft = "desktop";
+                bottomRight = "lockScreen";
+              };
 
-        appearance = {
-          sidebarIconSize = "medium";
-          iconTintColor = "1.0 0.699742 0.475 0.687281";
-        };
+              finder.defaultView = "list";
 
-        dock.titleBarDoubleClick = "zoom";
-        scrollBars.clickAction = "jumpToNextPage";
-        menuBar.hideSpotlightIcon = true;
-        stageManager.groupWindowsFromSameApp = true;
-        widgets.showOnDesktop = true;
-      };
+              appearance = {
+                sidebarIconSize = "medium";
+                iconTintColor = "1.0 0.699742 0.475 0.687281";
+              };
 
-      system.defaults = {
-        # The Dock is per-user and lives in modules/users/aidanwright/ (the `dock`
-        # home-manager aspect), so non-primary users (e.g. admin) get the default.
+              dock.titleBarDoubleClick = "zoom";
+              scrollBars.clickAction = "jumpToNextPage";
+              menuBar.hideSpotlightIcon = true;
+              stageManager.groupWindowsFromSameApp = true;
+              widgets.showOnDesktop = true;
+            };
 
-        NSGlobalDomain = {
-          AppleInterfaceStyle = "Dark";
-          AppleIconAppearanceTheme = "TintedDark";
-          AppleShowScrollBars = "Automatic";
-          AppleShowAllExtensions = true;
-          AppleShowAllFiles = true;
-          NSStatusItemSpacing = 12;
-          NSStatusItemSelectionPadding = 24;
-          InitialKeyRepeat = 15;
-          KeyRepeat = 2;
-        };
+            system.defaults = {
+              # The Dock is per-user (the options.dock home-manager aspect, set in
+              # modules/users/aidanwright/), so non-primary users (e.g. admin) get the default.
 
-        finder = {
-          AppleShowAllExtensions = true;
-          ShowPathbar = true;
-          ShowStatusBar = true;
-          _FXSortFoldersFirst = true;
-          _FXSortFoldersFirstOnDesktop = true;
-          CreateDesktop = true;
-          FXEnableExtensionChangeWarning = false;
-          FXRemoveOldTrashItems = true;
-          ShowRemovableMediaOnDesktop = false;
-        };
+              NSGlobalDomain = {
+                AppleInterfaceStyle = "Dark";
+                AppleIconAppearanceTheme = "TintedDark";
+                AppleShowScrollBars = "Automatic";
+                AppleShowAllExtensions = true;
+                AppleShowAllFiles = true;
+                NSStatusItemSpacing = 12;
+                NSStatusItemSelectionPadding = 24;
+                InitialKeyRepeat = 15;
+                KeyRepeat = 2;
+              };
 
-        WindowManager.EnableStandardClickToShowDesktop = true;
+              finder = {
+                AppleShowAllExtensions = true;
+                ShowPathbar = true;
+                ShowStatusBar = true;
+                _FXSortFoldersFirst = true;
+                _FXSortFoldersFirstOnDesktop = true;
+                CreateDesktop = true;
+                FXEnableExtensionChangeWarning = false;
+                FXRemoveOldTrashItems = true;
+                ShowRemovableMediaOnDesktop = false;
+              };
 
-        controlcenter = {
-          BatteryShowPercentage = true;
-          NowPlaying = false;
-          Bluetooth = true;
-          Sound = null;
-          Display = null;
-          FocusModes = null;
-          AirDrop = null;
-        };
+              WindowManager.EnableStandardClickToShowDesktop = true;
 
-        CustomUserPreferences = {
-          "com.ethanbills.DockDoor".showMenuBarIcon = false;
-          "com.jinghaoshe.qspace.pro".settings_hidden_visible = 1;
-        };
+              controlcenter = {
+                BatteryShowPercentage = true;
+                NowPlaying = false;
+                Bluetooth = true;
+                Sound = null;
+                Display = null;
+                FocusModes = null;
+                AirDrop = null;
+              };
+
+              CustomUserPreferences = {
+                "com.ethanbills.DockDoor".showMenuBarIcon = false;
+                "com.jinghaoshe.qspace.pro".settings_hidden_visible = 1;
+              };
+            };
+          };
       };
     };
 }

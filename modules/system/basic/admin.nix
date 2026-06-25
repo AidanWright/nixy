@@ -19,7 +19,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.admin.darwin =
+  flake.aspects.basic.admin.darwin =
     {
       pkgs,
       lib,

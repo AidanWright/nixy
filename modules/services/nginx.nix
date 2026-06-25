@@ -4,7 +4,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.nginx.nixos =
+  flake.aspects.services.nginx.nixos =
     { ... }:
     {
       services.nginx = {
