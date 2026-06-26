@@ -24,6 +24,9 @@
             inputs.self.modules.homeManager."programs.claude"
             inputs.self.modules.homeManager."programs.spotify"
             inputs.self.modules.homeManager."programs.dorion"
+            inputs.self.modules.homeManager."programs.starship"
+            inputs.self.modules.homeManager."programs.bat"
+            inputs.self.modules.homeManager."programs.eza"
           ];
 
           home.packages = with pkgs; [
@@ -47,7 +50,7 @@
               let
                 spotifyApp =
                   if config.programs ? spicetify then
-                    { app = "/Applications/Nix Apps/Spotify.app"; }
+                    { app = "/Users/aidanwright/Applications/Home Manager Apps/Spotify.app"; }
                   else
                     { app = "/System/Applications/Music.app"; };
                 kittyApp =
@@ -60,6 +63,14 @@
                     { app = "/Users/aidanwright/Applications/Home Manager Apps/LibreWolf.app"; }
                   else
                     { app = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app"; };
+                mailApp =
+                  let
+                    caskNames = map (cask: cask.name or cask) osConfig.homebrew.casks;
+                  in
+                  if builtins.elem "zoho-trident" caskNames then
+                    { app = "/Applications/Trident.app"; }
+                  else
+                    { app = "/System/Applications/Mail.app"; };
               in
               [
                 { app = "/Applications/QSpace Pro.app"; }
@@ -67,7 +78,7 @@
                 { spacer.small = true; }
                 browserApp
                 { app = "/System/Applications/Messages.app"; }
-                { app = "/Applications/Trident.app"; }
+                mailApp
                 spotifyApp
                 kittyApp
                 { app = "/System/Applications/System Settings.app"; }
