@@ -624,16 +624,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1781828256,
+        "lastModified": 1782404455,
         "narHash": "sha256-yJvy+JrrHxkl+XWZFQo/5o8WSNPUI0O+2yoT2CFKgbI=",
-        "owner": "AidanWright",
+        "owner": "fzakaria",
         "repo": "nix-auto-follow",
-        "rev": "7bbf5981c306ee288cb4e42028f9bbd0c784aa72",
+        "rev": "83f2b736b2705e536eff7e5075e7b15fba12cb22",
         "type": "github"
       },
       "original": {
-        "owner": "AidanWright",
-        "ref": "feat/ignore-inputs",
+        "owner": "fzakaria",
         "repo": "nix-auto-follow",
         "type": "github"
       }
@@ -970,15 +969,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1782491993,
-        "narHash": "sha256-51h31BT6yJzYJWXZTow1xfXJcIe7bfMEL0Mz2Gdu/WU=",
+        "lastModified": 1782498875,
+        "narHash": "sha256-QP8hKg4KEymlSOL/YnpYcQKazY/xcYde+VErbPyCmPk=",
         "owner": "AidanWright",
         "repo": "nixy-apps",
-        "rev": "3d7f4f80ad069e9137f1aa516d543cfc172d8dec",
+        "rev": "2273714f6abd0780990e94cc13922c080aab8502",
         "type": "github"
       },
       "original": {
         "owner": "AidanWright",
+        "ref": "latest",
         "repo": "nixy-apps",
         "type": "github"
       }

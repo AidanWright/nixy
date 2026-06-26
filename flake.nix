@@ -53,7 +53,7 @@
     };
 
     nix-auto-follow = {
-      url = "github:AidanWright/nix-auto-follow/feat/ignore-inputs";
+      url = "github:fzakaria/nix-auto-follow";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -86,7 +86,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     nixy-apps = {
-      url = "github:AidanWright/nixy-apps";
+      url = "github:AidanWright/nixy-apps/latest";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
