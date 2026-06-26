@@ -7,7 +7,7 @@
 {
   imports = [ inputs.flake-file.flakeModules.nix-auto-follow ];
 
-  flake-file.inputs.nix-auto-follow.url = lib.mkForce "github:AidanWright/nix-auto-follow/feat/ignore-inputs";
+  flake-file.inputs.nix-auto-follow.url = lib.mkForce "github:fzakaria/nix-auto-follow";
 
   # nix-nvim ships its own FlakeHub-locked nixpkgs; collapsing it onto the
   # project nixpkgs makes nix re-expand it and breaks check-flake-file. Leave
