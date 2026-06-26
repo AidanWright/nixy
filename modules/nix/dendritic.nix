@@ -13,7 +13,6 @@
   flake-file.inputs = {
     # mkForce locks stable so no transitive input can silently upgrade nixpkgs.
     nixpkgs.url = lib.mkForce "github:NixOS/nixpkgs/nixos-26.05";
-    nixpkgs-unstable.url = lib.mkDefault "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
 
   flake-file.description = "Base configurations for my NixOs Desktop & Servers and Nix-Darwin hosts";

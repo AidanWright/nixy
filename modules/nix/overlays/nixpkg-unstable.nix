@@ -15,6 +15,8 @@ let
   };
 in
 {
+  flake-file.inputs.nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
   perSystem =
     { system, ... }:
     {

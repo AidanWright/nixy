@@ -21,12 +21,7 @@
         {
           imports = [
             inputs.self.modules.homeManager."options.dock"
-            inputs.self.modules.homeManager."programs.claude"
-            inputs.self.modules.homeManager."programs.spotify"
-            inputs.self.modules.homeManager."programs.dorion"
-            inputs.self.modules.homeManager."programs.starship"
-            inputs.self.modules.homeManager."programs.bat"
-            inputs.self.modules.homeManager."programs.eza"
+            inputs.self.modules.homeManager."programs.all"
           ];
 
           home.packages = with pkgs; [
