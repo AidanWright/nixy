@@ -29,6 +29,7 @@
             mpv
             syncplay
             darwinApps.cryptomator
+            darwinApps.stremio
           ];
 
           dock = {
