@@ -81,6 +81,8 @@
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
+    nixpkgs-anki.url = "github:NixOS/nixpkgs/a0374025a863d007d98e3297f6aa46cc3141c2f0";
+
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";

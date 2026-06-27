@@ -1,14 +1,15 @@
 # modules/nix/overlays/qtwebengine-darwin-fix/qtwebengine-darwin-fix.nix
 ################################################################################
-# Fixes the qt6.qtwebengine 6.11.0 build on aarch64-darwin so programs.anki can
-# build from source. Two unrelated upstream breakages are worked around:
+# Exposes flake.lib.qtwebengineDarwinFixOverlay: an overlay that fixes the
+# qt6.qtwebengine 6.11.0 build on aarch64-darwin so anki builds from source.
+# It is applied to the frozen nixpkgs-anki input (see programs/anki.nix), not
+# the system nixpkgs, because the patches are version-specific to 6.11.0.
+# Two unrelated upstream breakages are worked around:
 #   1. NixOS/nixpkgs PR #515997 (unmerged): chromium's in-tree clang cannot find
 #      the libc++ headers and emits a relative -isysroot, so QtWebEngineCore
 #      fails to compile. See issue #514179.
 #   2. nodejs 24.15.0 has an EBADF regression that crashes @rollup/wasm-node
 #      during the devtools-frontend bundling; build with nodejs_22 instead.
-# Remove each workaround once its upstream fix lands and a built qtwebengine is
-# cached.
 ################################################################################
 { ... }:
 let
@@ -44,7 +45,5 @@ let
   };
 in
 {
-  flake.aspects.overlays.qtwebengine-darwin-fix.darwin = _: {
-    nixpkgs.overlays = [ overlay ];
-  };
+  flake.lib.qtwebengineDarwinFixOverlay = overlay;
 }
