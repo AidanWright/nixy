@@ -22,7 +22,7 @@ let
   nativeHostName = "stream_to_safari";
 in
 {
-  flake.aspects.programs.librewolf-safari-redirect.darwin =
+  flake.aspects.programs.browser.librewolf-safari-redirect.darwin =
     {
       config,
       pkgs,

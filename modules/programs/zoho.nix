@@ -9,7 +9,7 @@
     flake = false;
   };
 
-  flake.aspects.programs.office.darwin =
+  flake.aspects.programs.zoho.darwin =
     { ... }:
     {
       nix-homebrew.taps."AidanWright/homebrew-zoho" = inputs.homebrew-zoho;

@@ -1,7 +1,6 @@
 # modules/nix/tools/nix-auto-follow.nix
 ################################################################################
 # Flattens flake.lock by collapsing duplicate inputs onto the root pins.
-# Uses a fork that adds `--ignore`, so nix-nvim keeps its own FlakeHub pins.
 ################################################################################
 { inputs, lib, ... }:
 {

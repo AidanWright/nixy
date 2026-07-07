@@ -66,7 +66,7 @@ let
   '';
 in
 {
-  flake.aspects.programs.safari.darwin =
+  flake.aspects.programs.browser.safari.darwin =
     { config, ... }:
     {
       # Full uBlock Origin does not exist for Safari; uBlock Origin Lite (its MV3

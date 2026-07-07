@@ -1,6 +1,8 @@
 # modules/hosts/macbook-pro/configuration.nix
 ################################################################################
 # macbook-pro host configuration.
+# The included aspects define the features of the system.
+# The .all keyword includes all sub-aspects.
 ################################################################################
 { ... }:
 {

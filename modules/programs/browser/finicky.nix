@@ -10,7 +10,7 @@ let
   hostsArray = builtins.concatStringsSep ", " (map (host: ''"${host}"'') streamingHosts);
 in
 {
-  flake.aspects.programs.finicky.darwin =
+  flake.aspects.programs.browser.finicky.darwin =
     {
       config,
       pkgs,
