@@ -527,11 +527,11 @@
     "homebrew-zoho": {
       "flake": false,
       "locked": {
-        "lastModified": 1781741486,
-        "narHash": "sha256-2AxLHJXWZRMFjbZ32SsR77+U4n9M4LbPHRBlCE0Ex0M=",
+        "lastModified": 1783417023,
+        "narHash": "sha256-lHLEkf4a6Gykz7QrjckgXJ1TU49/Gwnu8sOMSQuao2w=",
         "owner": "AidanWright",
         "repo": "homebrew-zoho",
-        "rev": "28042b5199d6ecc94a2606ba0d19e29ff6bbdc59",
+        "rev": "4304a87fc6472dd570945a7e688293187f541b0f",
         "type": "github"
       },
       "original": {
@@ -985,11 +985,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782507175,
-        "narHash": "sha256-BTGJhs8XmgWS9cOiW/zX0/OXo5doHMmXHsKMWRii+TY=",
+        "lastModified": 1783435452,
+        "narHash": "sha256-YnqBHNeGzBLcgJCclVmL9/cO8o27y5wjnfLTWoHbgrg=",
         "owner": "AidanWright",
         "repo": "nixy-apps",
-        "rev": "25bfb5bf4e5a2c9e9ff732e87671d686dc344e6f",
+        "rev": "cf4ea2c80f7fee7b99760c51e0e8b1ffa7e31398",
         "type": "github"
       },
       "original": {
