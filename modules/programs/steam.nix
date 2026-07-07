@@ -7,6 +7,6 @@
   flake.aspects.programs.steam.darwin =
     { ... }:
     {
-      #homebrew.casks = [ "steam" ];
+      homebrew.casks = [ "steam" ];
     };
 }
