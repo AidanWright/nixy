@@ -43,18 +43,6 @@
         "librewolf-unwrapped-151.0.2-1"
       ];
 
-      launchd.user.agents.defaultBrowser = {
-        serviceConfig = {
-          ProgramArguments = [
-            "${pkgs.defaultbrowser}/bin/defaultbrowser"
-            "librewolf"
-          ];
-          RunAtLoad = true;
-          StandardOutPath = "/tmp/defaultbrowser.log";
-          StandardErrorPath = "/tmp/defaultbrowser.log";
-        };
-      };
-
       home-manager.users.${config.system.primaryUser} = {
         stylix.targets.librewolf = {
           profileNames = [ "default" ];
@@ -83,6 +71,12 @@
             settings = {
               "browser.toolbars.bookmarks.visibility" = "always";
               "browser.tabs.inTitlebar" = 1;
+
+              # Wipe history and cookies on close. Firefox 128+ renamed these
+              # from privacy.clearOnShutdown.* to the _v2 keys below.
+              "privacy.sanitize.sanitizeOnShutdown" = true;
+              "privacy.clearOnShutdown_v2.historyFormDataAndDownloads" = true;
+              "privacy.clearOnShutdown_v2.cookiesAndStorage" = true;
 
               # RFP breaks colonist.io's WebGL board;
               # exempt just that origin. exemptedDomains is inert without the
