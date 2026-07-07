@@ -1,4 +1,4 @@
-# modules/nix/overlays/qtwebengine-darwin-fix/qtwebengine-darwin-fix.nix
+# modules/programs/anki/qtwebengine-darwin-fix/qtwebengine-darwin-fix.nix
 ################################################################################
 # Exposes flake.lib.qtwebengineDarwinFixOverlay: an overlay that fixes the
 # qt6.qtwebengine 6.11.0 build on aarch64-darwin so anki builds from source.
