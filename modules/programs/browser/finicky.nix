@@ -1,8 +1,10 @@
-# modules/programs/finicky.nix
+# modules/programs/browser/finicky.nix
 ################################################################################
 # Routes URLs by domain. Finicky becomes the macOS default browser and hands
 # streaming sites (which need DRM LibreWolf refuses to play) to Safari, sending
-# everything else to LibreWolf.
+# everything else to LibreWolf. Launches at login and hides its own menu bar
+# icon (macOS's native "Allow in the Menu Bar" toggle lives in a SIP data vault
+# and cannot be set declaratively).
 ################################################################################
 { ... }:
 let
@@ -18,6 +20,20 @@ in
     }:
     {
       homebrew.casks = [ "finicky" ];
+
+      # Launch Finicky at login so it is already dispatching links before the
+      # first one is opened. `open -gb` resolves the app through LaunchServices
+      # by bundle id (no hard-coded path) without pulling it to the foreground.
+      launchd.user.agents.finicky = {
+        serviceConfig = {
+          ProgramArguments = [
+            "/usr/bin/open"
+            "-gb"
+            "se.johnste.finicky"
+          ];
+          RunAtLoad = true;
+        };
+      };
 
       # Point macOS at Finicky instead of a real browser; it re-dispatches every
       # opened link per the rules below. Replaces librewolf's own default-browser
@@ -46,6 +62,9 @@ in
             export default {
               defaultBrowser: {
                 name: "${config.home.homeDirectory}/Applications/Home Manager Apps/LibreWolf.app",
+              },
+              options: {
+                hideIcon: true,
               },
               handlers: [
                 {
