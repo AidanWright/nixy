@@ -1,4 +1,4 @@
-# modules/programs/librewolf.nix
+# modules/programs/browser/librewolf.nix
 ################################################################################
 # Configures the LibreWolf browser and a hardened default profile via home-manager.
 # Declarative add-ons are pulled from the NUR `rycee.firefox-addons` set.
@@ -36,9 +36,8 @@
     {
       nixpkgs.overlays = [ inputs.nur.overlays.default ];
 
-      # librewolf 151.0.2-1 carries an upstream advisory; the home-manager
-      # profile uses the same build, so the allowance moves here with it.
-      nixpkgs.config.permittedInsecurePackages = [
+      # librewolf 151.0.2-1 carries an upstream advisory.
+      permittedInsecurePackages = [
         "librewolf-151.0.2-1"
         "librewolf-unwrapped-151.0.2-1"
       ];

@@ -6,6 +6,13 @@
 ################################################################################
 { ... }:
 {
+  # pnpm 9.15.9 is dorion's Tauri build dep; darwin class so useGlobalPkgs sees it.
+  flake.aspects.programs.dorion.darwin =
+    { ... }:
+    {
+      permittedInsecurePackages = [ "pnpm-9.15.9" ];
+    };
+
   flake.aspects.programs.dorion.homeManager =
     { pkgs, ... }:
     let
