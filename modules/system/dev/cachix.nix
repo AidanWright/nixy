@@ -12,12 +12,15 @@
       ...
     }:
     let
+      # Determinate renders nix.custom.conf alphabetically, so `extra-substituters`
+      # is written before the base `substituters =` line and gets clobbered by it.
+      # Merge onto the base keys instead so these caches actually take effect.
       caches = {
-        extra-substituters = [
+        substituters = [
           "https://aidanwright.cachix.org"
           "https://nix-community.cachix.org"
         ];
-        extra-trusted-public-keys = [
+        trusted-public-keys = [
           "aidanwright.cachix.org-1:0SQiDDByZEpl3h36s1ItafKKMAcOoAlN3X9tApoDRog="
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         ];
