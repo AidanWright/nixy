@@ -87,10 +87,7 @@
 
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
-    nixy-apps = {
-      url = "github:AidanWright/nixy-apps/latest";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixy-apps.url = "github:AidanWright/nixy-apps/latest";
 
     nur = {
       url = "github:nix-community/NUR";

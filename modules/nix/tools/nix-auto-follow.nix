@@ -11,6 +11,10 @@
   # nix-nvim ships its own FlakeHub-locked nixpkgs; collapsing it onto the
   # project nixpkgs makes nix re-expand it and breaks check-flake-file. Leave
   # its whole subtree alone instead of pinning every input by hand.
+  #
+  # nixy-apps' binary cache is keyed to its own pinned nixpkgs; collapsing it
+  # onto the project nixpkgs changes the buildDotnetModule toolchain and misses
+  # the cache, forcing a from-source (relaxed-sandbox) build of xray-builder.
   flake-file.prune-lock.program = lib.mkForce (
     pkgs:
     pkgs.writeShellApplication {
@@ -19,7 +23,7 @@
         inputs.nix-auto-follow.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
       text = ''
-        auto-follow --ignore nix-nvim "$1" > "$2"
+        auto-follow --ignore nix-nvim --ignore nixy-apps "$1" > "$2"
       '';
     }
   );
