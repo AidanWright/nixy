@@ -1,4 +1,4 @@
-# modules/programs/starship.nix
+# modules/programs/cli/starship.nix
 ################################################################################
 # Two-line starship prompt (directory, git, nix-shell, language versions,
 # command duration). Colours come from Stylix; this file shapes the layout.

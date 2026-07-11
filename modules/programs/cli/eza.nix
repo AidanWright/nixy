@@ -1,4 +1,4 @@
-# modules/programs/eza.nix
+# modules/programs/cli/eza.nix
 ################################################################################
 # eza as the ls replacement, with its fish integration providing the
 # ls/ll/la/lt aliases.

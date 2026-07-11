@@ -1,4 +1,4 @@
-# modules/programs/bat.nix
+# modules/programs/cli/bat.nix
 ################################################################################
 # bat plus the bat-extras commands (batdiff/batgrep/batman/batwatch/prettybat),
 # with cat/grep/man/diff/watch aliased to their bat equivalents in fish.

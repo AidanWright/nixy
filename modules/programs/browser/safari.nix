@@ -1,4 +1,4 @@
-# modules/programs/safari.nix
+# modules/programs/browser/safari.nix
 ################################################################################
 # Hardens Safari, the browser Finicky hands streaming sites to, with the uBlock
 # Origin Lite content blocker and a privacy Configuration Profile.

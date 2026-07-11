@@ -1,4 +1,4 @@
-# modules/programs/kitty/kitty.nix
+# modules/programs/cli/kitty/kitty.nix
 ################################################################################
 # Configures kitty terminal via home-manager.
 ################################################################################

@@ -1,4 +1,4 @@
-# modules/programs/fish.nix
+# modules/programs/cli/fish.nix
 ################################################################################
 # Fish as the primary user's login shell, plus its interactive integrations:
 # fzf (Ctrl-R/Ctrl-T/Alt-C), zoxide (`z`), direnv, and man-page completions.

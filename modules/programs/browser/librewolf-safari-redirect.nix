@@ -1,4 +1,4 @@
-# modules/programs/librewolf-safari-redirect.nix
+# modules/programs/browser/librewolf-safari-redirect.nix
 ################################################################################
 # Catches streaming sites navigated to *inside* LibreWolf (typed in the bar or
 # clicked in-page) and reopens them in Safari, completing what finicky.nix does

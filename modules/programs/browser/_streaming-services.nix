@@ -1,4 +1,4 @@
-# modules/programs/_streaming-services.nix
+# modules/programs/browser/_streaming-services.nix
 ################################################################################
 # Streaming hostnames that need DRM Safari plays but LibreWolf refuses. Shared
 # by finicky.nix (routes these to Safari) and librewolf-safari-redirect.nix (the

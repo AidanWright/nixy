@@ -1,4 +1,4 @@
-# modules/programs/office.nix
+# modules/programs/zoho.nix
 ################################################################################
 # Zoho office suite: WorkDrive and Trident.
 ################################################################################
