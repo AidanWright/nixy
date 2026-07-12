@@ -30,7 +30,6 @@
               gh
 
               ### nice to have
-              eza
               qemu
             ];
 

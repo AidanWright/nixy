@@ -20,6 +20,7 @@
           dev.all
           services.tailscale
           programs.all
+          users.admin
           users.aidanwright
         ];
 

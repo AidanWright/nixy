@@ -11,6 +11,8 @@
   flake.aspects.users.aidanwright.darwin =
     { ... }:
     {
+      imports = [ (inputs.self.lib.useFish "aidanwright") ];
+
       home-manager.users.aidanwright =
         {
           config,
