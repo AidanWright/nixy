@@ -7,6 +7,14 @@
 {
   flake-file.inputs.nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
+  # The nix-homebrew wrapper hardcodes HOMEBREW_NO_AUTO_UPDATE, so cask metadata
+  # never refreshes on its own. Pin the cask tap as an input instead: versions
+  # then track the flake lock and bump reproducibly with `nix flake update`.
+  flake-file.inputs.homebrew-cask = {
+    url = "github:Homebrew/homebrew-cask";
+    flake = false;
+  };
+
   flake.aspects.homebrew.darwin =
     { config, ... }:
     {
@@ -31,6 +39,11 @@
 
         # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
         mutableTaps = false;
+
+        # Serve cask definitions from the pinned tap in the Nix store rather than
+        # Homebrew's never-refreshed API cache. Official taps are trusted by
+        # default, so no trust entry is needed.
+        taps."homebrew/homebrew-cask" = inputs.homebrew-cask;
       };
     };
 }

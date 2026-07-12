@@ -40,6 +40,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    homebrew-cask = {
+      url = "github:Homebrew/homebrew-cask";
+      flake = false;
+    };
+
     homebrew-zoho = {
       url = "github:AidanWright/homebrew-zoho";
       flake = false;

@@ -32,6 +32,21 @@
             darwinApps.stremio
           ];
 
+          # Personal identity for the git tooling enabled by programs.all. The
+          # signing key is a GPG (openpgp) fingerprint already in this user's
+          # keyring; signByDefault turns on commit and tag signing.
+          programs.git = {
+            settings.user = {
+              name = "Aidan Wright";
+              email = "38870143+AidanWright@users.noreply.github.com";
+            };
+            signing = {
+              key = "1810A874AD3037F1";
+              format = "openpgp";
+              signByDefault = true;
+            };
+          };
+
           dock = {
             autohide = false;
             show-recents = false;

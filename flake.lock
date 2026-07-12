@@ -524,6 +524,22 @@
         "type": "github"
       }
     },
+    "homebrew-cask": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1783799593,
+        "narHash": "sha256-167EKSyNOl8SBfr+OcK6nNS68oDQiUTaItlglUN4DfI=",
+        "owner": "Homebrew",
+        "repo": "homebrew-cask",
+        "rev": "aae398596b68de4bbd1d2efe19b072842fb7f8b8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Homebrew",
+        "repo": "homebrew-cask",
+        "type": "github"
+      }
+    },
     "homebrew-zoho": {
       "flake": false,
       "locked": {
@@ -1067,6 +1083,7 @@
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
+        "homebrew-cask": "homebrew-cask",
         "homebrew-zoho": "homebrew-zoho",
         "import-tree": "import-tree",
         "mcp-servers-nix": "mcp-servers-nix",
