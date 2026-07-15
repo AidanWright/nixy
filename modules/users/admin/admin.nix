@@ -65,5 +65,12 @@
           /usr/sbin/dseditgroup -o edit -a admin -t user admin || true
         fi
       '';
+
+      # Needed for admin can activate nix-darwin builds, assuming not already the owner.
+      environment.etc."gitconfig".text = ''
+        [safe]
+        	directory = /private/etc/nix-darwin
+        	directory = /etc/nix-darwin
+      '';
     };
 }
