@@ -16,7 +16,7 @@
         ];
 
         darwin =
-          { pkgs, ... }:
+          { config, pkgs, ... }:
           {
             environment.systemPackages = with pkgs; [
               unstable.bitwarden-cli
@@ -28,6 +28,14 @@
               "bitwarden"
               "orbstack"
             ];
+
+            homebrew.masApps."Yubico Authenticator" = 1497506650;
+
+            home-manager.users.${config.system.primaryUser} =
+              { config, ... }:
+              {
+                home.sessionVariables.SSH_AUTH_SOCK = "${config.home.homeDirectory}/.bitwarden-ssh-agent.sock";
+              };
           };
       };
     };

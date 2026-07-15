@@ -31,6 +31,8 @@
 
               ### nice to have
               qemu
+              yubikey-agent
+              yubikey-manager
             ];
 
             environment.variables = {
