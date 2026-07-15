@@ -1,4 +1,4 @@
-# modules/system/hardening.nix
+# modules/system/security/hardening.nix
 ################################################################################
 # Follow some common sense system security settings.
 ################################################################################
@@ -44,18 +44,18 @@
               enable = true;
               # Prevent the system from responding to uninvited probing requests (e.g., ICMP Echo).
               # However, the computer still answers incoming requests for authorized apps. Unexpected requests are ignored.
-              enableStealthMode = true; 
-              
+              enableStealthMode = true;
+
               # Built-in software not automatically allowed to receive incoming connections
               allowSigned = false;
-              # Downloaded signed software software not automatically allowed to receive incoming connections 
+              # Downloaded signed software software not automatically allowed to receive incoming connections
               allowSignedApp = false;
 
               # WARNING: prevents all sharing services, such as File Sharing and Screen Sharing, from receiving incoming connections.
-              # 
+              #
               # blockAllIncoming = true;
             };
- 
+
             darwin.siri = {
               enable = false;
               enableAppleIntelligence = false;

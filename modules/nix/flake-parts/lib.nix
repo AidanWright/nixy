@@ -39,7 +39,7 @@
           inputs.self.modules.darwin."minimal.base"
           inputs.self.modules.darwin."security.all"
           inputs.self.modules.darwin."homebrew"
-          inputs.self.modules.darwin."home-manager" 
+          inputs.self.modules.darwin."home-manager"
           { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
       };

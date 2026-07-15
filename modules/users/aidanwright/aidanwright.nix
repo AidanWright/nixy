@@ -30,7 +30,7 @@
             rectangle # better window snapping
             mpv # better VLC
             syncplay # watch videos together, synced
-            darwinApps.cryptomator # mount encrypted volumes. 
+            darwinApps.cryptomator # mount encrypted volumes.
             darwinApps.stremio # stream linux isos
           ];
 

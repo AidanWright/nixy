@@ -1,7 +1,7 @@
 # modules/system/basic/settings.nix
 ################################################################################
 # Basic system settings: power management, input devices, privacy, and search.
-# Highly opinionated but represents sensible defaults. 
+# Highly opinionated but represents sensible defaults.
 ################################################################################
 { ... }:
 {
@@ -15,7 +15,7 @@
           { pkgs, config, ... }:
           {
             environment.systemPackages = [ pkgs.darwinApps.dockdoor ];
-                                                                                                                        
+
             launchd.user.agents.wallpaper = {
               serviceConfig = {
                 ProgramArguments = [
@@ -28,7 +28,7 @@
                 StandardErrorPath = "/tmp/wallpaper.log";
               };
             };
-                                                                                                                        
+
             homebrew.casks = [
               "qspace-pro" # finder alternative
             ];
@@ -45,7 +45,7 @@
                 InitialKeyRepeat = 15;
                 KeyRepeat = 2;
               };
-                                                                                                                        
+
               finder = {
                 AppleShowAllExtensions = true;
                 ShowPathbar = true;
@@ -57,9 +57,9 @@
                 FXRemoveOldTrashItems = true;
                 ShowRemovableMediaOnDesktop = false;
               };
-                                                                                                                        
+
               WindowManager.EnableStandardClickToShowDesktop = true;
-                                                                                                                        
+
               controlcenter = {
                 BatteryShowPercentage = true;
                 NowPlaying = false;
@@ -69,7 +69,7 @@
                 FocusModes = null;
                 AirDrop = null;
               };
-                                                                                                                        
+
               CustomUserPreferences = {
                 "com.ethanbills.DockDoor".showMenuBarIcon = false;
                 "com.jinghaoshe.qspace.pro".settings_hidden_visible = 1;
@@ -83,20 +83,20 @@
             };
 
             darwin = {
-              hotCorners = {                                                                                             
+              hotCorners = {
                 topLeft = "disabled";
                 topRight = "disabled";
                 bottomLeft = "desktop";
                 bottomRight = "lockScreen";
               };
-                                                                                                                        
+
               finder.defaultView = "list";
-                                                                                                                        
+
               appearance = {
                 sidebarIconSize = "medium";
                 iconTintColor = "1.0 0.699742 0.475 0.687281";
               };
-                                                                                                                        
+
               dock.titleBarDoubleClick = "zoom";
               scrollBars.clickAction = "jumpToNextPage";
               menuBar.hideSpotlightIcon = true;

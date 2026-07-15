@@ -1,7 +1,7 @@
 # modules/programs/cli/fish.nix
 ################################################################################
 # Fish as a login shell. The `programs.fish` aspect enables fish system-wide;
-# the `flake.lib.useFish <user>` factory turns it on for one account 
+# the `flake.lib.useFish <user>` factory turns it on for one account
 # `imports = [ (inputs.self.lib.useFish "<user>") ]`.
 ################################################################################
 { lib, ... }:

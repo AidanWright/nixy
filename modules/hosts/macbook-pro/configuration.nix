@@ -12,12 +12,12 @@
       macbook-pro = {
         includes = with aspects; [
           determinate
-          basic.all 
-          
+          basic.all
+
           ##
           services.tailscale
           programs.all
-          dev.all  
+          dev.all
 
           ##
           users.admin
