@@ -22,16 +22,16 @@
         }:
         {
           imports = [
-            inputs.self.modules.homeManager."options.dock"
+            inputs.self.modules.homeManager."options.dock" # dock customization helper
             inputs.self.modules.homeManager."programs.all"
           ];
 
           home.packages = with pkgs; [
-            rectangle
-            mpv
-            syncplay
-            darwinApps.cryptomator
-            darwinApps.stremio
+            rectangle # better window snapping
+            mpv # better VLC
+            syncplay # watch videos together, synced
+            darwinApps.cryptomator # mount encrypted volumes. 
+            darwinApps.stremio # stream linux isos
           ];
 
           # Personal identity for the git tooling enabled by programs.all. The
