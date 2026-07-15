@@ -9,7 +9,7 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  flake.aspects.sops.nixos =
+  flake.aspects.security.sops.nixos =
     { pkgs, ... }:
     {
       imports = [ inputs.sops-nix.nixosModules.sops ];
@@ -18,6 +18,8 @@
         unstable.sops
         unstable.age
         unstable.ssh-to-age
+        unstable.gnupg
+        unstable.ssh-to-pgp
       ];
 
       # Derives the age decryption key from the host's SSH host key so no
@@ -25,7 +27,7 @@
       sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     };
 
-  flake.aspects.sops.darwin =
+  flake.aspects.security.sops.darwin =
     { pkgs, ... }:
     {
       imports = [ inputs.sops-nix.darwinModules.sops ];
@@ -34,8 +36,11 @@
         unstable.sops
         unstable.age
         unstable.ssh-to-age
+        unstable.gnupg
+        unstable.ssh-to-pgp
+        unstable.age-plugin-yubikey
       ];
 
-      #sops.age.sshKeyPaths = [ "" ];
+      sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     };
 }

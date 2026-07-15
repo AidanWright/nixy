@@ -1,34 +1,14 @@
 # modules/system/hardening.nix
 ################################################################################
-# macOS security hardening (ERNW Hardening Guide — macOS 26 Tahoe). Consolidates
-# the firewall, Siri/AI disable, and auto-update settings that used to live in
-# basic.nix/desktop.nix, and adds the guide's implementable controls. Native
-# nix-darwin options are used where they exist; the rest are applied imperatively
-# in a root activation script (each guarded so activation never aborts).
-#
-# NOT handled here (no declarative mechanism — apply/verify manually):
-#   * Enable FileVault / SIP / Authenticated Root / Secure Boot Full (Recovery or
-#     GUI; already enabled on this host — verify with `fdesetup status`,
-#     `csrutil status`, `bputil -d`).
-#   * "Allow accessories to connect: Ask" — no scriptable key (MDM only); already
-#     the secure default on Apple Silicon laptops.
-#   * Time Machine backup encryption; Apple-Watch-unlock + extra Touch ID uses;
-#     iCloud / passkey-sync / proximity-password config profiles (MDM).
-#   * Recurring audits: system extensions, LaunchDaemons, login items, setuid.
-# Declined (per design discussion): block-all-incoming, AirDrop, Handoff,
-#   password policy, disabling Location Services / Lockdown Mode / iCloud,
-#   disabling Remote Login (kept for Tailscale ssh-in).
-# Account separation (mandatory) is scaffolded separately under modules/users/.
+# Follow some common sense system security settings.
 ################################################################################
 { ... }:
 {
   flake.aspects =
     { aspects, ... }:
     {
-      hardening = {
-        # darwin.siri.* options come from the options.base aspect. Including it
-        # here is safe even though basic also does: resolved aspects are deduped
-        # by a stable key (see _aspects/resolve-aspect.nix).
+      security.hardening = {
+        # darwin.siri.* options come from the options.base aspect
         includes = with aspects; [ options.base ];
 
         darwin =
@@ -59,17 +39,23 @@
             ];
           in
           {
-            # Firewall: enabled + stealth, and NOT auto-allowing signed software to
-            # listen (more prompts, but signed malware can't silently accept
-            # inbound connections).
+            # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#enable-macos-firewall
             networking.applicationFirewall = {
               enable = true;
-              enableStealthMode = true;
+              # Prevent the system from responding to uninvited probing requests (e.g., ICMP Echo).
+              # However, the computer still answers incoming requests for authorized apps. Unexpected requests are ignored.
+              enableStealthMode = true; 
+              
+              # Built-in software not automatically allowed to receive incoming connections
               allowSigned = false;
+              # Downloaded signed software software not automatically allowed to receive incoming connections 
               allowSignedApp = false;
-            };
 
-            # Apple Intelligence / Siri off (zero-trust on external compute).
+              # WARNING: prevents all sharing services, such as File Sharing and Screen Sharing, from receiving incoming connections.
+              # 
+              # blockAllIncoming = true;
+            };
+ 
             darwin.siri = {
               enable = false;
               enableAppleIntelligence = false;
@@ -135,10 +121,60 @@
             system.activationScripts.postActivation.text = lib.mkAfter ''
               echo "[hardening] applying imperative macOS hardening" >&2
 
-              # Gatekeeper (already on by default; enforce explicitly).
-              /usr/sbin/spctl --global-enable || true
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#ensure-system-integrity-protection-is-enabled
+              if ! csrutil status | /usr/bin/grep -q 'enabled'; then
+                echo "ERR: System Integrity Protection disabled."
+                echo "Recommended to erase the Mac and reinstall the operating system."
+              fi
 
-              # Disable unused sharing/legacy services.
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#ensure-system-volume-is-read-only
+              if ! system_profiler SPStorageDataType | awk '/Mount Point: \/$/{x=NR+2}(NR==x)' | /usr/bin/grep -q 'No'; then
+                echo "ERR: System volume mounted as writable"
+                echo "Rebooting the computer will mount the system volume as read-only."
+              fi
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#enable-authenticated-root
+              if ! csrutil authenticated-root status | /usr/bin/grep -q 'enabled'; then
+                echo "ERR: Authenticated root disabled"
+                echo "boot the system into Recovery mode and run 'csrutil authenticated-root enable'"
+              fi
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#gatekeeper
+              if spctl --status --verbose | /usr/bin/grep -q 'disabled'; then
+                echo "ERR: Gatekeeper disabled for one or both of: assessments, developer id"
+                echo "Attempting to enable..."
+                /usr/sbin/spctl --global-enable 
+              fi
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#filevault
+              if ! fdesetup status -extended | /usr/bin/grep -q 'On'; then
+                echo "ERR: Filevault is disabled"
+                echo "Attempting to enable... User input required"
+                /usr/bin/fdesetup enable
+              fi
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#restrict-users
+              echo "The following users are authorized to unlock FileVault (should be at least one):"
+              /usr/bin/fdesetup list | awk -F ',' '{print $1}'
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-system-diagnostic-and-usage-data-reporting
+              defaults write com.apple.CrashReporter DialogType none 
+              defaults write com.apple.CrashReporter DialogType crashreport
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#volume-ownership-secure-token
+              # if ! sudo sysadminctl -secureTokenStatus "$(id -un)" | /usr/bin/grep -q 'ENABLED'; then
+              #   echo "ERR: Secure Token disabled for current user"
+              # fi
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-automatic-login-and-user-list 
+              defaults delete /Library/Preferences/com.apple.loginwindow autoLoginUser 2>/dev/null || true
+              rm -f /etc/kcpassword || true
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-creation-of-metadata-files
+              defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true || true
+              defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true || true
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-network-services--sharing
               ${lib.concatMapStringsSep "\n              " (
                 service: "launchctl disable system/${service} || true"
               ) disabledServices}
@@ -146,29 +182,20 @@
               /usr/bin/AssetCacheManagerUtil deactivate || true
               /usr/sbin/cupsctl --no-share-printers || true
 
-              # Power Nap / wake-on-network off (womp == wake-on-network-access).
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-power-nap-and-network-wake
               /usr/bin/pmset -a womp 0 || true
 
               # Touch ID: fall back to the password after 30 min (default is 2 days).
               /usr/bin/bioutil -w -s --btimeout 1800 || true
 
-              # Analytics: don't auto-submit crash/diagnostic data.
-              defaults write "/Library/Application Support/CrashReporter/DiagnosticMessagesHistory" AutoSubmit -bool false || true
-              defaults write "/Library/Application Support/CrashReporter/DiagnosticMessagesHistory" ThirdPartyDataSubmit -bool false || true
-
-              # Remaining auto-update chain (system domain; no native option).
+              # auto-update chain
               for key in AutomaticCheckEnabled AutomaticDownload CriticalUpdateInstall ConfigDataInstall; do
                 defaults write /Library/Preferences/com.apple.SoftwareUpdate "$key" -int 1 || true
               done
               defaults write /Library/Preferences/com.apple.SoftwareUpdate ScheduleFrequency -int 1 || true
               defaults write /Library/Preferences/com.apple.commerce AutoUpdate -int 1 || true
 
-              # Ensure automatic login stays off (FileVault already enforces this).
-              defaults delete /Library/Preferences/com.apple.loginwindow autoLoginUser 2>/dev/null || true
-              rm -f /etc/kcpassword || true
-
-              # Require an admin password to change system-wide settings. Re-applied
-              # each rebuild so a macOS upgrade that resets it self-heals.
+              # Require an admin password to change system-wide settings
               if security authorizationdb read system.preferences > /tmp/hardening-sysprefs.plist 2>/dev/null; then
                 /usr/libexec/PlistBuddy -c "Set :shared false" /tmp/hardening-sysprefs.plist 2>/dev/null || true
                 security authorizationdb write system.preferences < /tmp/hardening-sysprefs.plist 2>/dev/null || true
