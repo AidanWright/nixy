@@ -1,27 +1,19 @@
 # modules/programs/cli/starship.nix
 ################################################################################
-# Single-line powerline prompt (plus a prompt character on the next line). Each
-# section's leading arrow uses starship's `prev_bg` colour, which resolves to
-# the previous *non-empty* module's background. That keeps the line continuous:
-# a section's arrow appears only when the section does, and always matches the
-# colour behind it, whatever section happens to be there. Colours come from the
-# gruvbox palette below. A user aspect can add a second line via the
-# `local.starshipExtraLine` option (see modules/users/admin/admin.nix).
+# PS1 prompt styling.
+# Does not currently use the coloring style set by stylix, instead set manually.
 ################################################################################
 { ... }:
 {
   flake.aspects.programs.starship.homeManager =
     { lib, config, ... }:
     let
-      # An arrow from the previous section into `bg`, then the body on `bg`.
-      # `prev_bg` follows whatever non-empty section precedes it, so this stays
-      # correct no matter which optional sections are present.
       seg = bg: body: "[](fg:prev_bg bg:${bg})[ ${body} ](fg:color_fg0 bg:${bg})";
 
       langFormat = seg "color_green" "$symbol($version)";
     in
     {
-      # A per-user aspect can append a second prompt line (a role banner, a
+      # A per-user aspect can append a second prompt line (e.g. a role banner,
       # warning) by setting this, rather than overriding the whole format string.
       options.local.starshipExtraLine = lib.mkOption {
         type = lib.types.str;

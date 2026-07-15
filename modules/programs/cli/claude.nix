@@ -1,4 +1,4 @@
-# modules/programs/claude.nix
+# modules/programs/cli/claude.nix
 ################################################################################
 # Claude tooling, scoped to the user that imports it. The claude-code CLI (from
 # sadjow/claude-code-nix) ships with pre-configured MCP servers, and the Claude

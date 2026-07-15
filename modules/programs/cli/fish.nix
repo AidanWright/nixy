@@ -1,9 +1,7 @@
 # modules/programs/cli/fish.nix
 ################################################################################
 # Fish as a login shell. The `programs.fish` aspect enables fish system-wide;
-# the `flake.lib.useFish <user>` factory turns it on for one account — setting
-# the login shell and the per-user interactive integrations (fzf, zoxide,
-# direnv, man-page completions). Import it from a user aspect with
+# the `flake.lib.useFish <user>` factory turns it on for one account 
 # `imports = [ (inputs.self.lib.useFish "<user>") ]`.
 ################################################################################
 { lib, ... }:
@@ -20,11 +18,13 @@
   flake.lib.useFish = user: {
     # nix-darwin only changes a login shell for accounts in `users.knownUsers`,
     # which also requires a literal `uid` (it cannot be read at eval time).
-    # Hardcoding uid 501 would assume this host's primary user, breaking the
-    # "runnable by anyone" rule, so instead set the shell with the same `dscl`
-    # call nix-darwin runs internally (see nix-darwin#811 and #1237). The
-    # /run/current-system path is garbage-collection-safe; the guard keeps the
-    # write idempotent.
+    # Hardcoding uid 501 would assume this host's primary user.
+    #
+    # This hack bypass that restriction. In the past there was also some worry about adding root
+    # to the knownUsers, but *could* be outdated; see:
+    # https://github.com/nix-darwin/nix-darwin/issues/1237
+    #
+    # Instead, we use a factory flake pattern and enable in user module.
     system.activationScripts.postActivation.text = lib.mkAfter ''
       fishPath="/run/current-system/sw/bin/fish"
       if [ "$(dscl . -read "/Users/${user}" UserShell 2>/dev/null | awk '{print $2}')" != "$fishPath" ]; then
@@ -47,6 +47,7 @@
             gp = "git push";
             gl = "git pull";
           };
+          generateCompletions = true;
         };
 
         programs.fzf = {
@@ -74,7 +75,7 @@
         # ships no man package on darwin >= 26.05 (it defers to system man), so
         # the cache can never build and only emits a warning. Completions still
         # come from fish_update_completions above.
-        programs.man.generateCaches = false;
+        programs.man.generateCaches = true;
       };
   };
 }

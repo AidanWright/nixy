@@ -10,6 +10,7 @@
     {
       # enableFishIntegration provides the ls/ll/la/lt/lla aliases that point at
       # eza, so no manual alias wiring is needed here.
+      # Safe to enable even if not using fish
       programs.eza = {
         enable = true;
         enableFishIntegration = true;
