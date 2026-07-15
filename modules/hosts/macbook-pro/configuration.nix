@@ -11,15 +11,15 @@
     {
       macbook-pro = {
         includes = with aspects; [
-          basic.all
           determinate
-          homebrew
-          home-manager
-          hardening
-          overlays.darwin-apps
-          dev.all
+          basic.all 
+          
+          ##
           services.tailscale
           programs.all
+          dev.all  
+
+          ##
           users.admin
           users.aidanwright
         ];

@@ -35,7 +35,11 @@
           inputs.self.modules.darwin.${name}
           inputs.self.modules.darwin."overlays.unstable"
           inputs.self.modules.darwin."overlays.master"
+          inputs.self.modules.darwin."overlays.darwin-apps"
           inputs.self.modules.darwin."minimal.base"
+          inputs.self.modules.darwin."security.all"
+          inputs.self.modules.darwin."homebrew"
+          inputs.self.modules.darwin."home-manager" 
           { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
       };

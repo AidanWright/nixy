@@ -37,6 +37,7 @@
         imports = [
           inputs.self.modules.darwin."minimal.determinate"
           inputs.self.modules.darwin."minimal.lix"
+          inputs.self.modules.darwin."homebrew"
         ];
 
         # where we update the registry to include our unfree-nixpkgs
