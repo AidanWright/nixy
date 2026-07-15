@@ -1,10 +1,5 @@
 # modules/nix/tools/remote-deploy.nix
 ################################################################################
-#
-################################################################################
-################################################################################
-# modules/nix/tools/remote-deploy.nix
-################################################################################
 # Exposes system.build.provision (nixos-anywhere) and system.build.deploy
 # (nixos-rebuild) for every NixOS host. Run with --impure from the flake root.
 #
