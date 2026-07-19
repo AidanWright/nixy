@@ -1,14 +1,7 @@
 # modules/users/admin/admin.nix
 ################################################################################
-# Foundational `admin` account (ERNW guide: admin/standard separation). A hidden
-# account you escalate to (`su - admin`) for privileged work, put in the admin
-# group (which grants sudo). It has a real home (/Users/admin) and a
-# home-manager-managed zsh, so it can run `darwin-rebuild` (nix needs a writable
-# $HOME) and offer a usable shell once the daily account loses sudo. Pulled onto
-# a host by including the `users.admin` aspect (see the macbook-pro host).
-#
-# nix-darwin cannot set passwords or grant Secure Tokens, so finish ONCE by hand
-# as the current admin:
+# Assuming admin is not the default account, nix-darwin cannot set passwords or grant Secure Tokens,
+# so finish by hand as the current admin:
 #   sudo dscl . -passwd /Users/admin '<strong-password>'
 #   sudo sysadminctl -secureTokenOn admin -password - -adminUser aidanwright -adminPassword -
 #   sudo sysadminctl -secureTokenStatus admin            # MUST say ENABLED
