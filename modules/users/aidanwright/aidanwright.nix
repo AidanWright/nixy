@@ -34,9 +34,10 @@
             darwinApps.stremio # stream linux isos
           ];
 
-          # Personal identity for the git tooling enabled by programs.all. The
-          # signing key is a GPG (openpgp) fingerprint already in this user's
-          # keyring; signByDefault turns on commit and tag signing.
+          home.sessionVariables = {
+            SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+          };
+
           programs.git = {
             settings.user = {
               name = "Aidan Wright";

@@ -43,4 +43,19 @@
 
       sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     };
+
+  # Home-manager secrets decrypt at login with a disposable per-user age key
+  # (generated on first activation); its public half is a recipient in
+  # .sops.yaml. The YubiKey stays the author/recovery key. Wired for every user
+  # via home-manager.sharedModules in flake-parts/lib.nix.
+  flake.aspects.security.sops.homeManager =
+    { config, ... }:
+    {
+      imports = [ inputs.sops-nix.homeManagerModules.sops ];
+
+      sops.age = {
+        keyFile = "${config.home.homeDirectory}/.config/sops/age/hm-key.txt";
+        generateKey = true;
+      };
+    };
 }

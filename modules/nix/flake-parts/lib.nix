@@ -1,6 +1,6 @@
 # modules/nix/flake-parts/lib.nix
 ################################################################################
-# Exports mkNixos, mkDarwin, and mkHomeManager helpers via flake.lib.
+# Exports mkNixos and mkDarwin helpers via flake.lib.
 # https://github.com/Doc-Steve/dendritic-design-with-flake-parts/blob/main/modules/nix/flake-parts%20%5B%5D/lib.nix#L25
 ################################################################################
 {
@@ -40,17 +40,8 @@
           inputs.self.modules.darwin."security.all"
           inputs.self.modules.darwin."homebrew"
           inputs.self.modules.darwin."home-manager"
+          { home-manager.sharedModules = [ inputs.self.modules.homeManager."security.sops" ]; }
           { nixpkgs.hostPlatform = lib.mkDefault system; }
-        ];
-      };
-    };
-
-    mkHomeManager = system: name: {
-      ${name} = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = inputs.nixpkgs.legacyPackages.${system};
-        modules = [
-          inputs.self.modules.homeManager.${name}
-          { nixpkgs.config.allowUnfree = true; }
         ];
       };
     };

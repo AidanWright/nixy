@@ -19,7 +19,7 @@
 
             networking.hostName = "biggy";
 
-            sops.secrets.tailscale-auth-key.sopsFile = ./tailscale-auth-key.yaml;
+            sops.secrets.tailscale-auth-key.sopsFile = ../../../secrets/biggy/tailscale-auth-key.secret.yaml;
 
             disko.devices.disk.main = {
               device = "/dev/vda";

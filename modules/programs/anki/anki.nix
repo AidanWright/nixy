@@ -16,7 +16,7 @@
   flake-file.inputs.nixpkgs-anki.url = "github:NixOS/nixpkgs/a0374025a863d007d98e3297f6aa46cc3141c2f0";
 
   flake.aspects.programs.anki.homeManager =
-    { pkgs, ... }:
+    { pkgs, config, ... }:
     let
       ankiPkgs = import inputs.nixpkgs-anki {
         inherit (pkgs.stdenv.hostPlatform) system;
@@ -126,10 +126,25 @@
         };
     in
     {
+      sops.secrets = {
+        anki-sync-username.sopsFile = ../../../secrets/shared/anki-sync.secret.yaml;
+        anki-sync-key.sopsFile = ../../../secrets/shared/anki-sync.secret.yaml;
+      };
+
       programs.anki = {
         enable = true;
         package = wrapWithApp ankiPkgs.anki;
         addons = [ ankiPkgs.ankiAddons.review-heatmap ];
+
+        profiles."User 1" = {
+          default = true;  
+          sync = {
+            usernameFile = config.sops.secrets.anki-sync-username.path;
+            keyFile = config.sops.secrets.anki-sync-key.path;
+            autoSync = true;
+            syncMedia = true;
+          };
+        };
       };
     };
 }
