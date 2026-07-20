@@ -2,7 +2,7 @@
 ################################################################################
 #
 ################################################################################
-{ ... }:
+{ inputs, ... }:
 {
   flake.aspects.services.tailscale = {
     darwin =
@@ -20,6 +20,10 @@
     nixos =
       { config, ... }:
       {
+        # inputs.self coerces to flake root path
+        sops.secrets.tailscale-auth-key.sopsFile =
+          inputs.self + "/${config.networking.hostName}/tailscale-auth-key.secret.yaml";
+
         services.tailscale = {
           enable = true;
           authKeyFile = config.sops.secrets.tailscale-auth-key.path;
