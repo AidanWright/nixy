@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<BaseLayout title="Aidan Wright" description="Personal site and blog.">
+  <h1>Aidan Wright</h1>
+
+  <section>
+    <h2>Blog</h2>
+    <ul>
+      {
+        posts.map((post) => (
+          <li>
+            <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+            <span> — {post.data.date.toDateString()}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <ul>
+      {
+        projects.map((project) => (
+          <li>
+            <a href={`/projects/${project.slug}`}>{project.data.title}</a>
+            <span> — {project.data.description}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

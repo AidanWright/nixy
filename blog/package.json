@@ -1,0 +1,17 @@
+{
+  "name": "aidanwright-blog",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^4.16.18",
+    "@astrojs/mdx": "^3.1.9",
+    "remark-math": "^6.0.0",
+    "rehype-katex": "^7.0.1",
+    "katex": "^0.16.11"
+  }
+}
