@@ -1,6 +1,10 @@
 # modules/services/tailscale.nix
 ################################################################################
+# Tailscale is a WireGuard-based mesh VPN that connects all hosts privately.
+# https://tailscale.com/ | https://search.nixos.org/options?query=services.tailscale
 #
+# NixOS: authenticates headlessly via a sops-encrypted auth key.
+# Darwin: installs the Tailscale app via Homebrew.
 ################################################################################
 { inputs, ... }:
 {
@@ -20,9 +24,10 @@
     nixos =
       { config, ... }:
       {
-        # inputs.self coerces to flake root path
+        persistentDirectories = [ "/var/lib/tailscale" ];
+
         sops.secrets.tailscale-auth-key.sopsFile =
-          inputs.self + "/${config.networking.hostName}/tailscale-auth-key.secret.yaml";
+          inputs.self + "/secrets/${config.networking.hostName}/tailscale-auth-key.secret.yaml";
 
         services.tailscale = {
           enable = true;
