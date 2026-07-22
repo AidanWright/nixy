@@ -137,7 +137,7 @@
         addons = [ ankiPkgs.ankiAddons.review-heatmap ];
 
         profiles."User 1" = {
-          default = true;  
+          default = true;
           sync = {
             usernameFile = config.sops.secrets.anki-sync-username.path;
             keyFile = config.sops.secrets.anki-sync-key.path;

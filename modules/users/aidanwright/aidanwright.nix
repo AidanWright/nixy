@@ -29,7 +29,6 @@
           home.packages = with pkgs; [
             rectangle # better window snapping
             mpv # better VLC
-            syncplay # watch videos together, synced
             darwinApps.cryptomator # mount encrypted volumes.
             darwinApps.stremio # stream linux isos
           ];
@@ -95,6 +94,7 @@
                 mailApp
                 spotifyApp
                 kittyApp
+                { app = "/Users/aidanwright/Applications/Home Manager Apps/LaTeX Editor.app"; }
                 { app = "/System/Applications/System Settings.app"; }
                 { spacer.small = true; }
               ];
