@@ -2,15 +2,12 @@
 ################################################################################
 # Follow some common sense system security settings.
 ################################################################################
-{ ... }:
+{ inputs, ... }:
 {
   flake.aspects =
     { aspects, ... }:
     {
       security.hardening = {
-        # darwin.siri.* options come from the options.base aspect
-        includes = with aspects; [ options.base ];
-
         darwin =
           {
             config,
@@ -39,6 +36,9 @@
             ];
           in
           {
+            # darwin.siri.* options come from the options.base aspect
+            imports = [ inputs.self.modules.darwin."options.base" ];
+
             # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#enable-macos-firewall
             networking.applicationFirewall = {
               enable = true;
@@ -143,7 +143,7 @@
               if spctl --status --verbose | /usr/bin/grep -q 'disabled'; then
                 echo "ERR: Gatekeeper disabled for one or both of: assessments, developer id"
                 echo "Attempting to enable..."
-                /usr/sbin/spctl --global-enable 
+                /usr/sbin/spctl --global-enable
               fi
 
               # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#filevault
@@ -158,7 +158,7 @@
               /usr/bin/fdesetup list | awk -F ',' '{print $1}'
 
               # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-system-diagnostic-and-usage-data-reporting
-              defaults write com.apple.CrashReporter DialogType none 
+              defaults write com.apple.CrashReporter DialogType none
               defaults write com.apple.CrashReporter DialogType crashreport
 
               # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#volume-ownership-secure-token
@@ -166,7 +166,7 @@
               #   echo "ERR: Secure Token disabled for current user"
               # fi
 
-              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-automatic-login-and-user-list 
+              # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-automatic-login-and-user-list
               defaults delete /Library/Preferences/com.apple.loginwindow autoLoginUser 2>/dev/null || true
               rm -f /etc/kcpassword || true
 
@@ -208,6 +208,122 @@
               ${asUser "defaults write com.apple.amp.mediasharingd home-sharing-enabled -int 0"}
               ${asUser ''security set-keychain-settings -l "/Users/${primaryUser}/Library/Keychains/login.keychain-db"''}
             '';
+          };
+
+        nixos =
+          { lib, ... }:
+          {
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#sysctl--kernel-parameters
+            # Restrict kernel internals: hide kernel pointers, limit debug logs, prevent process tracing, and randomize memory layout.
+            boot.kernel.sysctl = {
+              "kernel.dmesg_restrict" = 1;
+              # NixOS defaults kptr_restrict to 1; 2 additionally hides kernel pointers
+              # from processes with CAP_SYSLOG, which is the recommended hardened value.
+              "kernel.kptr_restrict" = lib.mkForce 2;
+              "kernel.yama.ptrace_scope" = 1;
+              "kernel.randomize_va_space" = 2;
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#sysctl--kernel-parameters
+              # Block unprivileged access to the eBPF subsystem, which has a history of privilege escalation vulnerabilities.
+              "kernel.unprivileged_bpf_disabled" = 1;
+              "net.core.bpf_jit_harden" = 2;
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#sysctl--kernel-parameters
+              # Prevent setuid programs from writing core dumps and protect shared file paths from link-based attacks.
+              "fs.suid_dumpable" = 0;
+              "fs.protected_fifos" = 2;
+              "fs.protected_regular" = 2;
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#sysctl--kernel-parameters
+              # Harden IPv4 networking: enable SYN cookie protection, enforce reverse-path filtering, and reject ICMP redirects and source-routed packets.
+              "net.ipv4.tcp_syncookies" = 1;
+              "net.ipv4.conf.all.rp_filter" = 1;
+              "net.ipv4.conf.default.rp_filter" = 1;
+              "net.ipv4.conf.all.accept_redirects" = 0;
+              "net.ipv4.conf.default.accept_redirects" = 0;
+              "net.ipv4.conf.all.secure_redirects" = 0;
+              "net.ipv4.conf.default.secure_redirects" = 0;
+              "net.ipv4.conf.all.accept_source_route" = 0;
+              "net.ipv4.conf.default.accept_source_route" = 0;
+              "net.ipv4.conf.all.send_redirects" = 0;
+              "net.ipv4.conf.default.send_redirects" = 0;
+              "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
+
+              # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#sysctl--kernel-parameters
+              # Harden IPv6 networking: reject ICMP redirects and source-routed packets; use temporary addresses to limit tracking.
+              "net.ipv6.conf.all.accept_redirects" = 0;
+              "net.ipv6.conf.default.accept_redirects" = 0;
+              "net.ipv6.conf.all.accept_source_route" = 0;
+              "net.ipv6.conf.default.accept_source_route" = 0;
+              "net.ipv6.conf.all.use_tempaddr" = lib.mkDefault 2;
+              "net.ipv6.conf.default.use_tempaddr" = lib.mkDefault 2;
+              # NixOS controls ip_forward for NAT and containers; forcing 0 would
+              # break container networking managed elsewhere in this config.
+            };
+
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#kernel-modules
+            # Disable rarely-used network protocols that expand the kernel's attack surface.
+            boot.blacklistedKernelModules = [
+              "dccp"
+              "sctp"
+            ];
+
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#mandatory-access-control
+            # Confine processes with mandatory access control policies and prevent replacing the running kernel image.
+            security.apparmor.enable = true;
+            security.protectKernelImage = true;
+
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#sudo
+            # Limit sudo to wheel-group members only; allocate a pseudo-terminal to log sudo sessions and prevent TTY hijacking.
+            security.sudo.execWheelOnly = true;
+            security.sudo.extraConfig = ''
+              Defaults use_pty
+              Defaults lecture = "never"
+              Defaults timestamp_timeout=5
+            '';
+
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#core-dumps
+            # Disable core dumps so a crashing process cannot write sensitive memory to disk.
+            systemd.coredump.enable = false;
+            security.pam.loginLimits = [
+              {
+                domain = "*";
+                type = "hard";
+                item = "core";
+                value = "0";
+              }
+            ];
+
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#audit-logging
+            # Record changes to authentication files, sudo configuration, and login sessions for forensic review.
+            security.auditd.enable = true;
+            security.audit = {
+              enable = true;
+              rules = [
+                "-w /etc/passwd -p wa -k identity"
+                "-w /etc/shadow -p wa -k identity"
+                "-w /etc/sudoers -p wa -k scope"
+                "-w /etc/sudoers.d -p wa -k scope"
+                "-w /var/run/utmp -p wa -k session"
+              ];
+            };
+
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#logging
+            # Keep logs on disk across reboots and compress them to reduce storage use.
+            services.journald.extraConfig = ''
+              Storage=persistent
+              Compress=yes
+            '';
+
+            # Restrict nix daemon access to root and wheel so unprivileged users cannot build or install arbitrary packages.
+            nix.settings.allowed-users = [
+              "root"
+              "@wheel"
+            ];
+
+            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#firewall
+            # Enable the default firewall; individual services open only the ports they need.
+            networking.firewall.enable = lib.mkDefault true;
           };
       };
     };

@@ -74,8 +74,11 @@
       {
         imports = [
           inputs.self.modules.nixos."dev.cli-tools"
-          inputs.self.modules.nixos.sops
+          inputs.self.modules.nixos."security.sops"
+          inputs.self.modules.nixos."persistence"
         ];
+
+        nixpkgs.config.allowUnfree = true;
 
         nix.settings.experimental-features = [
           "nix-command"
