@@ -1,7 +1,10 @@
 # modules/nix/tools/remote-deploy.nix
 ################################################################################
-# Exposes system.build.provision (nixos-anywhere) and system.build.deploy
-# (nixos-rebuild) for every NixOS host. Run with --impure from the flake root.
+# Exposes `provision` (nixos-anywhere) and `deploy` (nixos-rebuild) apps. Both
+# take the flake host as their first argument and the SSH target (user@host,
+# any user) as the second. Built for the machine running the command, so a
+# Darwin deployer can install/update a Linux host. Run with --impure from the
+# flake root.
 #
 # Initial provisioning — sops bootstrap:
 #   Before provisioning, generate the host's SSH key and derive its age key so
@@ -16,14 +19,14 @@
 #      Add the output as &biggy in .sops.yaml and re-encrypt any biggy secrets:
 #        sops updatekeys modules/hosts/biggy/<secret>.yaml
 #
-#   3. Provision (the --extra-files flag injects the key before install):
-#        nix run --impure .#nixosConfigurations.<host>.config.system.build.provision \
-#          -- root@<ip> --extra-files /tmp/biggy
+#   3. Provision (the --extra-files flag injects the key before install).
+#      First argument is the host, the rest pass through to nixos-anywhere:
+#        nix run --impure .#provision -- biggy nixos@<ip> --extra-files /tmp/biggy
 #
-# Ongoing deploys:
-#   nix run --impure .#nixosConfigurations.<host>.config.system.build.deploy
+# Ongoing deploys (host, then SSH target):
+#   nix run --impure .#deploy -- biggy nixos@biggy
 ################################################################################
-{ ... }:
+{ inputs, lib, ... }:
 {
   flake-file.inputs = {
     disko = {
@@ -39,30 +42,38 @@
     };
   };
 
-  flake.aspects.remote-deploy.nixos =
-    { config, pkgs, ... }:
-    let
-      hostname = config.networking.hostName;
-    in
+  perSystem =
+    { pkgs, ... }:
     {
-      system.build.provision = pkgs.pkgsBuildHost.writeShellApplication {
-        name = "provision-${hostname}";
-        runtimeInputs = [ pkgs.pkgsBuildHost.nixos-anywhere ];
-        text = ''
-          nixos-anywhere --flake "path:$PWD#${hostname}" "$@"
-        '';
-      };
+      apps.provision.program = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "provision";
+          runtimeInputs = [ pkgs.nixos-anywhere ];
+          text = ''
+            hostname="$1"
+            shift
+            # pwd -P resolves symlinks; macOS /etc is a symlink and path: refs
+            # reject symlinked components.
+            nixos-anywhere --flake "path:$(pwd -P)#$hostname" "$@"
+          '';
+        }
+      );
 
-      system.build.deploy = pkgs.pkgsBuildHost.writeShellApplication {
-        name = "deploy-${hostname}";
-        runtimeInputs = [ pkgs.pkgsBuildHost.nixos-rebuild ];
-        text = ''
-          nixos-rebuild switch \
-            --flake "path:$PWD#${hostname}" \
-            --target-host "root@${hostname}" \
-            --build-host "root@${hostname}" \
-            --use-remote-sudo
-        '';
-      };
+      apps.deploy.program = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "deploy";
+          runtimeInputs = [ pkgs.nixos-rebuild ];
+          text = ''
+            hostname="$1"
+            target="$2"
+            shift 2
+            nixos-rebuild switch \
+              --flake "path:$(pwd -P)#$hostname" \
+              --target-host "$target" \
+              --build-host "$target" \
+              --use-remote-sudo "$@"
+          '';
+        }
+      );
     };
 }

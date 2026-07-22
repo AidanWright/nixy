@@ -45,6 +45,9 @@ in
       programs.ssh.extraConfig = sshConfig;
       programs.ssh.knownHosts.nixbuild = knownHost;
       environment.etc."nix/machines".text = machinesFile;
+      # Without this, nixpkgs pins nix.settings.builders to null and collides
+      # with builderSettings.
+      nix.distributedBuilds = true;
       nix.settings = builderSettings;
     };
 }

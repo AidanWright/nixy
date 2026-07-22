@@ -20,6 +20,7 @@
           {
             environment.systemPackages = with pkgs; [
               unstable.bitwarden-cli
+              unar
             ];
 
             # bitwarden stays on Homebrew: the nixpkgs bitwarden-desktop is pinned

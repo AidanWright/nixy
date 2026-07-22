@@ -3,7 +3,7 @@ keys:
   - &recovery age10p4jkgdu6w2xd8lwvsrwcgl32eqlutsxmdc6aaheuqyrkm99wces9hxxwy
   ## host keys
   - &macbook  age1jh705ecu8u3ctjvjr578s4y9f98w8fptjylw6e74u3cdc2fpn99qd5sum9
-  #- &biggy    age1...
+  - &biggy    age16w2jpcultk8gxdxvr2knz7p8d229tqla8fk4wduwhk043720r4fqa9lska
   ## HM keys
   - &aidanwright age1s57twrw666jdhzw65362dpt6qh4kjxl83f4zgh5au66dvq9tpfxqpy5vnm
 
@@ -24,9 +24,9 @@ creation_rules:
           - *macbook
           - *aidanwright
 
-  #- path_regex: secrets/biggy/.*\.secret\.yaml$
-  #  key_groups:
-  #    - age: [*admin, *recovery, *biggy]
+  - path_regex: secrets/biggy/.*\.secret\.yaml$
+    key_groups:
+      - age: [*admin, *recovery, *biggy]
 
   - path_regex: .*\.secret\.yaml$
     key_groups:
