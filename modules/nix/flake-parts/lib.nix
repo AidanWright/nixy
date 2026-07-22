@@ -23,11 +23,22 @@
           inputs.self.modules.nixos."overlays.unstable"
           inputs.self.modules.nixos."overlays.master"
           inputs.self.modules.nixos."minimal.base"
-          inputs.self.modules.nixos.remote-deploy
           { nixpkgs.hostPlatform = lib.mkDefault system; }
         ];
       };
     };
+
+    tailscaleOnlyPorts =
+      {
+        tcp ? [ ],
+        udp ? [ ],
+      }:
+      {
+        networking.firewall.interfaces.tailscale0 = {
+          allowedTCPPorts = tcp;
+          allowedUDPPorts = udp;
+        };
+      };
 
     mkDarwin = system: name: {
       ${name} = inputs.nix-darwin.lib.darwinSystem {

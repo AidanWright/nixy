@@ -50,6 +50,8 @@
       flake = false;
     };
 
+    impermanence.url = "github:nix-community/impermanence";
+
     import-tree.url = "github:vic/import-tree";
 
     mcp-servers-nix = {
@@ -69,7 +71,11 @@
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
+    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
+
     nix-nvim.url = "https://flakehub.com/f/AidanWright/nix-nvim/*";
+
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
 
     nixos-anywhere = {
       url = "github:nix-community/nixos-anywhere";
