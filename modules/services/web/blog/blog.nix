@@ -1,4 +1,4 @@
-# modules/services/blog.nix
+# modules/services/web/blog/blog.nix
 ################################################################################
 # Astro static blog built with buildNpmPackage and served by nginx at the apex domain.
 # https://astro.build/
@@ -7,7 +7,7 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.aspects.services.blog.nixos =
+  flake.aspects.services.web.blog.blog.nixos =
     { pkgs, ... }:
     let
       blogSite = pkgs.buildNpmPackage {

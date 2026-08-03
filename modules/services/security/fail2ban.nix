@@ -1,4 +1,4 @@
-# modules/services/fail2ban.nix
+# modules/services/security/fail2ban.nix
 ################################################################################
 # Fail2ban (https://github.com/fail2ban/fail2ban) scans log files and bans IPs
 # that show signs of repeated authentication failures. The sshd jail is enabled
@@ -6,7 +6,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.fail2ban.nixos =
+  flake.aspects.services.security.fail2ban.nixos =
     { ... }:
     {
       persistentDirectories = [ "/var/lib/fail2ban" ];

@@ -1,11 +1,11 @@
-# modules/services/nginx.nix
+# modules/services/web/nginx.nix
 ################################################################################
 # nginx reverse proxy that terminates TLS for all public web services.
 # https://nginx.org/ | https://search.nixos.org/options?query=services.nginx
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.nginx.nixos =
+  flake.aspects.services.web.nginx.nixos =
     { ... }:
     {
       # TLS certificates live here; persisting avoids re-issuance and hitting

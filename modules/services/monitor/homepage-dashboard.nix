@@ -1,11 +1,11 @@
-# modules/services/homepage-dashboard.nix
+# modules/services/monitor/homepage-dashboard.nix
 ################################################################################
 # Homepage (https://gethomepage.dev/) is a customizable application dashboard
 # and start page. It is exposed only on the Tailscale interface.
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.homepage-dashboard.nixos =
+  flake.aspects.services.monitor.homepage-dashboard.nixos =
     { ... }:
     {
       # DynamicUser redirects StateDirectory to /var/lib/private/homepage-dashboard;

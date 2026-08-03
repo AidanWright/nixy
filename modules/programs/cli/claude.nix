@@ -15,19 +15,33 @@
   };
 
   flake.aspects.programs.claude.homeManager =
-    { pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+
+      filesystemRoots =
+        if isDarwin then
+          [
+            "/etc/nix-darwin"
+            "/Users/aidanwright/Library/CloudStorage/ZohoWorkDriveTrueSync-AidanWright/General/Code"
+          ]
+        else
+          [ config.home.homeDirectory ];
+    in
     {
       imports = [ inputs.mcp-servers-nix.homeManagerModules.default ];
 
-      home.packages = [ pkgs.darwinApps.claude-desktop ];
+      home.packages = lib.optionals isDarwin [ pkgs.darwinApps.claude-desktop ];
 
       mcp-servers.programs = {
         filesystem = {
           enable = true;
-          args = [
-            "/etc/nix-darwin"
-            "/Users/aidanwright/Library/CloudStorage/ZohoWorkDriveTrueSync-AidanWright/General/Code"
-          ];
+          args = filesystemRoots;
         };
         fetch.enable = true;
         git.enable = true;

@@ -75,7 +75,8 @@
         imports = [
           inputs.self.modules.nixos."dev.cli-tools"
           inputs.self.modules.nixos."security.sops"
-          inputs.self.modules.nixos."persistence"
+          inputs.self.modules.nixos."services.security.chrony"
+          inputs.self.modules.nixos."services.security.dns"
         ];
 
         nixpkgs.config.allowUnfree = true;

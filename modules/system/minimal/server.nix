@@ -13,16 +13,17 @@
     {
       minimal.server = {
         includes = with aspects; [
-          security.hardening
+          #security.hardening
           security.impermanence
           security.sops
-          services.ssh
-          services.fail2ban
-          services.crowdsec
-          services.chrony
-          services.resolved
-          services.netdata
-          services.honeypot
+          services.security.tailscale
+          #services.security.ssh
+          #services.security.fail2ban
+          #services.security.crowdsec
+          #services.security.chrony
+          #services.security.dns
+          #services.monitor.netdata
+          #services.monitor.honeypot
         ];
       };
     };

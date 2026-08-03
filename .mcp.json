@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "/nix/store/jk3i5ykcini50d2qblvd12zp1nqgpyi1-mcp-server-fetch-2026.1.26/bin/mcp-server-fetch",
+      "type": "stdio"
+    },
+    "filesystem": {
+      "args": [
+        "/home/aidan"
+      ],
+      "command": "/nix/store/dvd95lg68wrzzcr9gjd8rv6410z4swhv-mcp-server-filesystem-2026.1.26/bin/mcp-server-filesystem",
+      "type": "stdio"
+    },
+    "git": {
+      "command": "/nix/store/pprarvp8apiz3v5bpd86rhy6m8511qfn-mcp-server-git-2026.1.26/bin/mcp-server-git",
+      "type": "stdio"
+    },
+    "memory": {
+      "command": "/nix/store/nj2li5awi2s4m23z39ccrd232qgrx5lw-mcp-server-memory-2026.1.26/bin/mcp-server-memory",
+      "type": "stdio"
+    },
+    "nixos": {
+      "command": "/nix/store/bq71zvr02qnxgx5fbjz2440379vq4hzw-mcp-nixos-2.4.3/bin/mcp-nixos",
+      "type": "stdio"
+    },
+    "sequential-thinking": {
+      "command": "/nix/store/v4b9w6igiwiwmc7xpcrqs29q0v778d0s-mcp-server-sequential-thinking-2026.1.26/bin/mcp-server-sequential-thinking",
+      "type": "stdio"
+    }
+  }
+}

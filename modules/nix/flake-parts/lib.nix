@@ -1,6 +1,6 @@
 # modules/nix/flake-parts/lib.nix
 ################################################################################
-# Exports mkNixos and mkDarwin helpers via flake.lib.
+# Exports mkNixos, mkDarwin, and mkHomeManager helpers via flake.lib.
 # https://github.com/Doc-Steve/dendritic-design-with-flake-parts/blob/main/modules/nix/flake-parts%20%5B%5D/lib.nix#L25
 ################################################################################
 {
@@ -28,17 +28,20 @@
       };
     };
 
-    tailscaleOnlyPorts =
-      {
-        tcp ? [ ],
-        udp ? [ ],
-      }:
-      {
-        networking.firewall.interfaces.tailscale0 = {
-          allowedTCPPorts = tcp;
-          allowedUDPPorts = udp;
+    mkHomeManager = system: name: extraModules: {
+      ${name} = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
         };
+        modules = [
+          inputs.self.modules.homeManager.${name}
+          inputs.self.modules.homeManager."overlays.unstable"
+          inputs.self.modules.homeManager."overlays.master"
+        ]
+        ++ extraModules;
       };
+    };
 
     mkDarwin = system: name: {
       ${name} = inputs.nix-darwin.lib.darwinSystem {
@@ -56,6 +59,18 @@
         ];
       };
     };
+
+    tailscaleOnlyPorts =
+      {
+        tcp ? [ ],
+        udp ? [ ],
+      }:
+      {
+        networking.firewall.interfaces.tailscale0 = {
+          allowedTCPPorts = tcp;
+          allowedUDPPorts = udp;
+        };
+      };
 
   };
 }

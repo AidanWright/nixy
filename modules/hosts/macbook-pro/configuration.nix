@@ -15,13 +15,13 @@
           basic.all
 
           ##
-          services.tailscale
+          services.security.tailscale
           programs.all
           dev.all
 
           ##
           users.admin
-          users.aidanwright
+          aidanwright
         ];
 
         darwin =

@@ -1,11 +1,11 @@
-# modules/services/uptime-kuma.nix
+# modules/services/monitor/uptime-kuma.nix
 ################################################################################
 # Uptime Kuma (https://github.com/louislam/uptime-kuma) is a self-hosted uptime
 # and status monitoring tool. It is exposed only on the Tailscale interface.
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.uptime-kuma.nixos =
+  flake.aspects.services.monitor.uptime-kuma.nixos =
     { ... }:
     {
       # DynamicUser redirects StateDirectory to /var/lib/private/uptime-kuma;

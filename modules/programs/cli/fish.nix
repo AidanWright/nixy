@@ -1,10 +1,12 @@
 # modules/programs/cli/fish.nix
 ################################################################################
-# Fish as a login shell. The `programs.fish` aspect enables fish system-wide;
-# the `flake.lib.useFish <user>` factory turns it on for one account
+# Fish as a login shell. `programs.fish.darwin` enables fish system-wide on
+# macOS; `programs.fish.homeManager` is the interactive home config (shared by
+# the standalone home and by useFish); the `flake.lib.useFish <user>` factory
+# makes fish the login shell for one darwin account:
 # `imports = [ (inputs.self.lib.useFish "<user>") ]`.
 ################################################################################
-{ lib, ... }:
+{ lib, inputs, ... }:
 {
   flake.aspects.programs.fish.darwin =
     { pkgs, ... }:
@@ -13,6 +15,47 @@
 
       # Register fish as a permissible login shell (writes /etc/shells).
       environment.shells = [ pkgs.fish ];
+    };
+
+  flake.aspects.programs.fish.homeManager =
+    { pkgs, lib, ... }:
+    {
+      programs.fish = {
+        enable = true;
+        interactiveShellInit = "set -g fish_greeting";
+        shellAbbrs = {
+          ".." = "cd ..";
+          "..." = "cd ../..";
+          gst = "git status";
+          gco = "git checkout";
+          gp = "git push";
+          gl = "git pull";
+        };
+        generateCompletions = true;
+      };
+
+      programs.fzf = {
+        enable = true;
+        enableFishIntegration = true;
+      };
+
+      programs.zoxide = {
+        enable = true;
+        enableFishIntegration = true;
+      };
+
+      programs.direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+      };
+
+      # fish builds completions from man pages, but only when asked to. Run
+      # the generator on activation so `man`-documented flags tab-complete.
+      home.activation.fishManCompletions = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        ${pkgs.fish}/bin/fish -c fish_update_completions || true
+      '';
+
+      programs.man.generateCaches = true;
     };
 
   flake.lib.useFish = user: {
@@ -33,49 +76,6 @@
       fi
     '';
 
-    home-manager.users.${user} =
-      { pkgs, lib, ... }:
-      {
-        programs.fish = {
-          enable = true;
-          interactiveShellInit = "set -g fish_greeting";
-          shellAbbrs = {
-            ".." = "cd ..";
-            "..." = "cd ../..";
-            gst = "git status";
-            gco = "git checkout";
-            gp = "git push";
-            gl = "git pull";
-          };
-          generateCompletions = true;
-        };
-
-        programs.fzf = {
-          enable = true;
-          enableFishIntegration = true;
-        };
-
-        programs.zoxide = {
-          enable = true;
-          enableFishIntegration = true;
-        };
-
-        programs.direnv = {
-          enable = true;
-          nix-direnv.enable = true;
-        };
-
-        # fish builds completions from man pages, but only when asked to. Run
-        # the generator on activation so `man`-documented flags tab-complete.
-        home.activation.fishManCompletions = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          ${pkgs.fish}/bin/fish -c fish_update_completions || true
-        '';
-
-        # fish defaults this on to build an apropos cache, but home-manager
-        # ships no man package on darwin >= 26.05 (it defers to system man), so
-        # the cache can never build and only emits a warning. Completions still
-        # come from fish_update_completions above.
-        programs.man.generateCaches = true;
-      };
+    home-manager.users.${user}.imports = [ inputs.self.modules.homeManager."programs.fish" ];
   };
 }

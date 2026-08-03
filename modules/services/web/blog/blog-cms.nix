@@ -1,4 +1,4 @@
-# modules/services/blog-cms.nix
+# modules/services/web/blog/blog-cms.nix
 ################################################################################
 # Sveltia CMS is a git-based headless CMS served at /admin on aidanwright.dev.
 # https://github.com/sveltia/sveltia-cms
@@ -17,7 +17,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.blog-cms.nixos =
+  flake.aspects.services.web.blog.blog-cms.nixos =
     {
       config,
       lib,

@@ -1,11 +1,11 @@
-# modules/services/netdata.nix
+# modules/services/monitor/netdata.nix
 ################################################################################
 # Netdata (https://www.netdata.cloud/) is a real-time performance and health
 # monitoring agent. It is exposed only on the Tailscale interface.
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.netdata.nixos =
+  flake.aspects.services.monitor.netdata.nixos =
     { ... }:
     {
       persistentDirectories = [ "/var/lib/netdata" ];

@@ -1,4 +1,4 @@
-# modules/system/persistence.nix
+# modules/system/options/persistence.nix
 ################################################################################
 # https://github.com/nix-community/impermanence
 # Aggregator options (`persistentDirectories`, `persistentFiles`) that services
@@ -7,7 +7,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.persistence.nixos =
+  flake.aspects.options.persistence.nixos =
     { lib, ... }:
     {
       options.persistentDirectories = lib.mkOption {

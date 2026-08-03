@@ -1,11 +1,11 @@
-# modules/services/ssh.nix
+# modules/services/security/ssh.nix
 ################################################################################
 # OpenSSH server, hardened and reachable only over the Tailscale interface.
 # https://search.nixos.org/options?query=services.openssh
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.ssh.nixos =
+  flake.aspects.services.security.ssh.nixos =
     { ... }:
     {
       # sops-nix derives the host age identity from the SSH host key; losing

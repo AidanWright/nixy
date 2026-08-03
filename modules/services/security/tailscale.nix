@@ -1,4 +1,4 @@
-# modules/services/tailscale.nix
+# modules/services/security/tailscale.nix
 ################################################################################
 # Tailscale is a WireGuard-based mesh VPN that connects all hosts privately.
 # https://tailscale.com/ | https://search.nixos.org/options?query=services.tailscale
@@ -8,7 +8,7 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.aspects.services.tailscale = {
+  flake.aspects.services.security.tailscale = {
     darwin =
       { pkgs, ... }:
       {

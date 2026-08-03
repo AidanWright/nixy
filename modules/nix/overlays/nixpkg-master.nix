@@ -24,4 +24,8 @@ in
   flake.aspects.overlays.master.nixos = _: {
     nixpkgs.overlays = [ masterOverlay ];
   };
+
+  flake.aspects.overlays.master.homeManager = _: {
+    nixpkgs.overlays = [ masterOverlay ];
+  };
 }

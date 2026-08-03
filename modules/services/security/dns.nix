@@ -1,4 +1,4 @@
-# modules/services/resolved.nix
+# modules/services/security/dns.nix
 ################################################################################
 # systemd-resolved (https://systemd.network/resolved.conf.html,
 # https://search.nixos.org/options?query=services.resolved) is the system DNS
@@ -6,9 +6,19 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.resolved.nixos =
+  flake.aspects.services.security.dns.nixos =
     { ... }:
+    let
+      nameservers = [
+        "9.9.9.9" # dns.quad9.net
+        "149.112.112.112" # dns.quad9.net
+        "1.1.1.1" # dns.cloudflare.com
+        "1.0.0.1" # dns.cloudflare.com
+      ];
+    in
     {
+      networking.nameservers = nameservers;
+
       services.resolved = {
         enable = true;
 
@@ -16,14 +26,9 @@
           # Require TLS for all upstream DNS queries; fail if the resolver
           # does not support DoT rather than falling back to plaintext.
           DNSOverTLS = "true";
+          DNSSEC = "allow-downgrade";
 
-          # Cloudflare (1.1.1.1) and Quad9 (9.9.9.9) both support DoT on port 853.
-          DNS = [
-            "1.1.1.1"
-            "1.0.0.1"
-            "9.9.9.9"
-            "149.112.112.112"
-          ];
+          DNS = nameservers;
         };
       };
     };

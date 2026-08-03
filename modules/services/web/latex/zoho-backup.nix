@@ -1,4 +1,4 @@
-# modules/services/zoho-backup.nix
+# modules/services/web/latex/zoho-backup.nix
 ################################################################################
 # https://rclone.org/zoho/
 # Daily rclone sync from /srv/latex to Zoho WorkDrive.
@@ -18,7 +18,7 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.aspects.services.zoho-backup.nixos =
+  flake.aspects.services.web.latex.zoho-backup.nixos =
     {
       config,
       pkgs,

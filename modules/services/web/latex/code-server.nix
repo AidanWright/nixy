@@ -1,4 +1,4 @@
-# modules/services/code-server.nix
+# modules/services/web/latex/code-server.nix
 ################################################################################
 # https://github.com/coder/code-server
 # VS Code in the browser, hardened with a dedicated system user and systemd
@@ -16,7 +16,7 @@
   flake.aspects =
     { aspects, ... }:
     {
-      services.code-server = {
+      services.web.latex.code-server = {
         includes = with aspects; [ overlays.vscode-extensions ];
 
         nixos =

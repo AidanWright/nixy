@@ -1,4 +1,4 @@
-# modules/services/honeypot.nix
+# modules/services/monitor/honeypot.nix
 ################################################################################
 # endlessh-go SSH tarpit (https://github.com/shizunge/endlessh-go) that slowly
 # feeds an endless SSH banner to public scanners on port 22, keeping real sshd
@@ -6,7 +6,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.honeypot.nixos =
+  flake.aspects.services.monitor.honeypot.nixos =
     { ... }:
     {
       services.endlessh-go = {

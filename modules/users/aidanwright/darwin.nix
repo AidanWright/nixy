@@ -1,4 +1,4 @@
-# modules/users/aidanwright/aidanwright.nix
+# modules/users/aidanwright/darwin.nix
 ################################################################################
 # The primary (daily) user. Owns the account record plus aidanwright's
 # home-manager setup: the per-user Dock and the claude/spotify homeManager
@@ -8,7 +8,7 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.aspects.users.aidanwright.darwin =
+  flake.aspects.aidanwright.darwin =
     { ... }:
     {
       imports = [ (inputs.self.lib.useFish "aidanwright") ];
@@ -22,6 +22,7 @@
         }:
         {
           imports = [
+            inputs.self.modules.homeManager.aidanwright # shared cross-platform home
             inputs.self.modules.homeManager."options.dock" # dock customization helper
             inputs.self.modules.homeManager."programs.all"
           ];
@@ -32,22 +33,6 @@
             darwinApps.cryptomator # mount encrypted volumes.
             darwinApps.stremio # stream linux isos
           ];
-
-          home.sessionVariables = {
-            SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-          };
-
-          programs.git = {
-            settings.user = {
-              name = "Aidan Wright";
-              email = "38870143+AidanWright@users.noreply.github.com";
-            };
-            signing = {
-              key = "1810A874AD3037F1";
-              format = "openpgp";
-              signByDefault = true;
-            };
-          };
 
           dock = {
             autohide = false;

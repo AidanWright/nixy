@@ -5,11 +5,9 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.users.aidanwright.nixos =
+  flake.aspects.aidanwright.nixos =
     { pkgs, ... }:
     {
-      # Home holds code-server data, the latex sync folder, dotfiles, and SSH
-      # client config; all are lost on every boot without this.
       persistentDirectories = [ "/home/aidanwright" ];
 
       programs.fish.enable = true;
@@ -19,6 +17,7 @@
         description = "Aidan Wright";
         extraGroups = [ "wheel" ];
         shell = pkgs.fish;
+        hashedPassword = "$y$j9T$mK1FeqHLotcjynVPiRuQR/$PtJ2uElNVrhA8ahgpzQudeA6qDhAZOlnZ3613ulEPi5";
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII8kymY/zb/avbDXLvFE+U6S1jy0lsSrBBfQQ5hjKkdD mail@aidanwright.dev"
         ];

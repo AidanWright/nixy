@@ -1,4 +1,4 @@
-# modules/services/syncthing.nix
+# modules/services/web/latex/syncthing.nix
 ################################################################################
 # https://syncthing.net/
 # Continuous file sync between biggy and macbook-pro.
@@ -14,7 +14,7 @@
 ################################################################################
 { inputs, ... }:
 {
-  flake.aspects.services.syncthing = {
+  flake.aspects.services.web.latex.syncthing = {
     nixos =
       { ... }:
       {

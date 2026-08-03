@@ -1,4 +1,4 @@
-# modules/services/forgejo.nix
+# modules/services/web/forgejo.nix
 ################################################################################
 # Forgejo is a lightweight, self-hosted Git forge — a community fork of Gitea.
 # https://forgejo.org/ | https://search.nixos.org/options?query=services.forgejo
@@ -8,7 +8,7 @@
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.forgejo.nixos =
+  flake.aspects.services.web.forgejo.nixos =
     { ... }:
     {
       persistentDirectories = [ "/var/lib/forgejo" ];

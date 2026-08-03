@@ -34,4 +34,8 @@ in
   flake.aspects.overlays.unstable.nixos = _: {
     nixpkgs.overlays = [ unstableOverlay ];
   };
+
+  flake.aspects.overlays.unstable.homeManager = _: {
+    nixpkgs.overlays = [ unstableOverlay ];
+  };
 }

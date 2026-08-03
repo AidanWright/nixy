@@ -15,7 +15,10 @@
       ...
     }:
     {
-      imports = [ inputs.impermanence.nixosModules.impermanence ];
+      imports = [
+        inputs.impermanence.nixosModules.impermanence
+        inputs.self.modules.nixos."options.persistence"
+      ];
 
       # Root is a tmpfs wiped on every boot; this is inherent to the
       # impermanence pattern and belongs here rather than in the host config.

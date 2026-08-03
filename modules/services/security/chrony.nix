@@ -1,12 +1,14 @@
-# modules/services/chrony.nix
+# modules/services/security/chrony.nix
 ################################################################################
 # Chrony (https://chrony-project.org/) is an NTP client and server that
 # supports Network Time Security (NTS) for authenticated time synchronization.
 # Enabling chrony automatically disables systemd-timesyncd.
+# Supposedly, chrony is more accurate than systemd-timesyncd. See:
+# https://www.reddit.com/r/linuxadmin/comments/1fxjieu/is_systemdtimesyncd_suitable_for_use_on_servers/
 ################################################################################
 { ... }:
 {
-  flake.aspects.services.chrony.nixos =
+  flake.aspects.services.security.chrony.nixos =
     { ... }:
     {
       services.chrony = {
