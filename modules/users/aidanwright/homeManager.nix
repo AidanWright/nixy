@@ -49,9 +49,7 @@
                 email = "38870143+AidanWright@users.noreply.github.com";
               };
               signing = {
-                # mkDefault so a host with its own card (e.g. the WSL box's
-                # YubiKey) can point signing at that key instead.
-                key = lib.mkDefault "1810A874AD3037F1";
+                key = "73663FC16A19BD82";
                 format = "openpgp";
                 signByDefault = true;
               };
