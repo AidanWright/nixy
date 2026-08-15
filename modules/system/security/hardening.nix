@@ -266,9 +266,9 @@
               "sctp"
             ];
 
-            # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#mandatory-access-control
-            # Confine processes with mandatory access control policies and prevent replacing the running kernel image.
-            security.apparmor.enable = true;
+            # Prevent replacing the running kernel image. Mandatory access
+            # control is its own aspect (security.apparmor) because it carries
+            # per-service policy rather than a single switch.
             security.protectKernelImage = true;
 
             # https://github.com/ernw/hardening/blob/master/operating_system/linux/ERNW_Hardening_Linux.md#sudo

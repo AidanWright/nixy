@@ -91,7 +91,52 @@
             );
           in
           {
-            imports = [ (inputs.self.lib.tailscaleOnlyPorts { tcp = [ 4443 ]; }) ];
+            imports = [
+              (inputs.self.lib.tailscaleOnlyPorts { tcp = [ 4443 ]; })
+
+              # Complements the systemd sandboxing below: that removes
+              # privileges, this bounds which paths remain reachable. An editor
+              # that compiles LaTeX is an execution engine by design, so the
+              # blast radius of a malicious document is worth narrowing.
+              (inputs.self.lib.mkServiceProfile {
+                name = "code-server";
+                # Resolved from the inner module arguments rather than the
+                # `let` bindings above, because `imports` is evaluated before
+                # `config` and reaching into it there is a recursion hazard.
+                packages =
+                  { config, pkgs, ... }:
+                  [
+                    config.services.code-server.package
+                    pkgs.nix-vscode-extensions.open-vsx.james-yu.latex-workshop
+                  ];
+
+                # texliveFull's closure is thousands of store paths; deriving
+                # rules from it would emit tens of thousands of lines for the
+                # parser to recompile at every boot. Its entry points are named
+                # below instead.
+                includeUnitPath = false;
+
+                rules =
+                  { config, lib, ... }:
+                  ''
+                    ${lib.concatMapStringsSep "\n  " (p: "${p}/bin/** ixr,") config.services.code-server.extraPackages}
+
+                    # Skipping the closure rules also skips their library
+                    # mapping. Scoped to this profile rather than the shared
+                    # include, since every other service gets exact paths.
+                    /nix/store/**.so* mr,
+
+                    # No `x` here: a LaTeX document that triggers \write18
+                    # cannot execute anything it drops in the workspace.
+                    /srv/latex/ r,
+                    /srv/latex/** rwkl,
+                    /var/lib/codeserver/ r,
+                    /var/lib/codeserver/** rwkl,
+
+                    owner @{PROC}/@{pid}/** r,
+                  '';
+              })
+            ];
 
             persistentDirectories = [
               "/srv/latex"

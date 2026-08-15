@@ -33,6 +33,29 @@
               21027
             ];
           })
+
+          # Syncthing runs as the login user aidanwright rather than a system
+          # user, so without a profile it inherits that user's full reach over
+          # the filesystem. This confines it to the folders it actually syncs.
+          (inputs.self.lib.mkServiceProfile {
+            name = "syncthing";
+            packages = { config, ... }: [ config.services.syncthing.package ];
+            rules =
+              { config, ... }:
+              ''
+                ${config.services.syncthing.configDir}/ r,
+                ${config.services.syncthing.configDir}/** rwkl,
+                ${config.services.syncthing.dataDir}/ r,
+                ${config.services.syncthing.dataDir}/** rwkl,
+
+                # The one shared folder. Deliberately not @{HOME}: syncthing has
+                # no reason to reach the rest of aidanwright's home directory.
+                /srv/latex/ r,
+                /srv/latex/** rwkl,
+
+                owner @{PROC}/@{pid}/** r,
+              '';
+          })
         ];
 
         services.syncthing = {

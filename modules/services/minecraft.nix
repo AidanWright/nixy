@@ -20,7 +20,32 @@
           {
             persistentDirectories = [ "/srv/minecraft" ];
 
-            imports = [ inputs.nix-minecraft.nixosModules.minecraft-servers ];
+            imports = [
+              inputs.nix-minecraft.nixosModules.minecraft-servers
+
+              # nix-minecraft already applies systemd hardening, so
+              # this adds path confinement on top rather than repeating it.
+              (inputs.self.lib.mkServiceProfile {
+                name = "minecraft";
+                unit = "minecraft-server-main";
+                packages = { config, ... }: [ config.services.minecraft-servers.servers.main.package ];
+                rules =
+                  { config, ... }:
+                  ''
+                    ${config.services.minecraft-servers.dataDir}/ r,
+                    ${config.services.minecraft-servers.dataDir}/** rwkl,
+
+                    # tmux control socket, created under RuntimeDirectory=minecraft.
+                    /run/minecraft/ rw,
+                    /run/minecraft/** rwkl,
+
+                    # The JVM sizes its heap from cgroup limits and reads its own
+                    # process state on startup.
+                    owner @{PROC}/@{pid}/** r,
+                    @{sys}/fs/cgroup/** r,
+                  '';
+              })
+            ];
 
             services.minecraft-servers = {
               enable = true;

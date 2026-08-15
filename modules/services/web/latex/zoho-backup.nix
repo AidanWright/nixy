@@ -32,29 +32,83 @@
         inputs.self + "/secrets/${config.networking.hostName}/rclone-zoho.secret.yaml"
       );
     in
-    lib.mkIf secretExists {
-      sops.secrets.rclone-zoho = {
-        sopsFile = inputs.self + "/secrets/${config.networking.hostName}/rclone-zoho.secret.yaml";
-        # The rclone process runs as aidanwright and must read the decrypted
-        # config; sops secrets are root-owned 0400 by default.
-        owner = "aidanwright";
-      };
+    {
+      # Imported unconditionally and switched off from within, because
+      # secretExists is derived from `config` and `imports` may not depend on it.
+      imports = [
+        (inputs.self.lib.mkServiceProfile {
+          name = "zoho-backup";
+          enable = _: secretExists;
+          packages = { pkgs, ... }: [ pkgs.rclone ];
+          rules =
+            { config, ... }:
+            ''
+              # Read-only on the source: a backup job has no reason to modify
+              # what it is backing up.
+              /srv/latex/ r,
+              /srv/latex/** r,
 
-      systemd.services.zoho-backup = {
-        description = "rclone sync latex → Zoho WorkDrive";
-        serviceConfig = {
-          Type = "oneshot";
-          User = "aidanwright";
-          ExecStart = "${pkgs.rclone}/bin/rclone --config ${config.sops.secrets.rclone-zoho.path} sync /srv/latex zoho:Backups/latex";
+              ${config.sops.secrets.rclone-zoho.path} r,
+
+              /var/cache/zoho-backup/ rw,
+              /var/cache/zoho-backup/** rwkl,
+
+              owner @{PROC}/@{pid}/** r,
+            '';
+        })
+      ];
+
+      config = lib.mkIf secretExists {
+        sops.secrets.rclone-zoho = {
+          sopsFile = inputs.self + "/secrets/${config.networking.hostName}/rclone-zoho.secret.yaml";
+          # The rclone process runs as aidanwright and must read the decrypted
+          # config; sops secrets are root-owned 0400 by default.
+          owner = "aidanwright";
         };
-      };
 
-      systemd.timers.zoho-backup = {
-        description = "Daily Zoho WorkDrive backup timer";
-        wantedBy = [ "timers.target" ];
-        timerConfig = {
-          OnCalendar = "daily";
-          Persistent = true;
+        systemd.services.zoho-backup = {
+          description = "rclone sync latex → Zoho WorkDrive";
+          serviceConfig = {
+            Type = "oneshot";
+            User = "aidanwright";
+
+            # rclone caches under $HOME by default, which ProtectHome makes
+            # read-only. A private cache directory keeps the home directory out
+            # of the picture entirely.
+            CacheDirectory = "zoho-backup";
+            ExecStart = "${pkgs.rclone}/bin/rclone --config ${config.sops.secrets.rclone-zoho.path} --cache-dir %C/zoho-backup sync /srv/latex zoho:Backups/latex";
+
+            # A backup job needs to read one directory and reach the network,
+            # nothing else. ProtectSystem=strict leaves the whole filesystem
+            # read-only, which suits a job that only ever reads its source.
+            NoNewPrivileges = true;
+            ProtectSystem = "strict";
+            ProtectHome = "read-only";
+            PrivateTmp = true;
+            PrivateDevices = true;
+            ProtectKernelTunables = true;
+            ProtectKernelModules = true;
+            ProtectControlGroups = true;
+            RestrictSUIDSGID = true;
+            RestrictNamespaces = true;
+            LockPersonality = true;
+            RestrictAddressFamilies = [
+              "AF_UNIX"
+              "AF_INET"
+              "AF_INET6"
+            ];
+            SystemCallArchitectures = "native";
+            CapabilityBoundingSet = [ "" ];
+          };
+        };
+
+        systemd.timers.zoho-backup = {
+          description = "Daily Zoho WorkDrive backup timer";
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnCalendar = "daily";
+            Persistent = true;
+          };
         };
       };
     };
