@@ -8,7 +8,12 @@
   flake.aspects.services.monitor.netdata.nixos =
     { ... }:
     {
-      persistentDirectories = [ "/var/lib/netdata" ];
+      # The dbengine time-series database lives under CacheDirectory, so without
+      # it every reboot discards all collected metric history.
+      persistentDirectories = [
+        "/var/lib/netdata"
+        "/var/cache/netdata"
+      ];
 
       services.netdata = {
         enable = true;

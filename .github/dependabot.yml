@@ -1,0 +1,13 @@
+# Keeps the SHA-pinned actions in .github/workflows current. Pinning without
+# this leaves them frozen at whatever commit was current when they were pinned,
+# including any security fix they later receive.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore(deps)
+    labels:
+      - dependencies

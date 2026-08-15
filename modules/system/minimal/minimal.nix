@@ -94,7 +94,7 @@
 
         system.autoUpgrade = {
           enable = true;
-          flake = "github:AidanWright/nixy";
+          flake = "github:AidanWright/nixy/release";
           dates = "daily";
         };
 

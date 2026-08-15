@@ -43,9 +43,18 @@
           # rebuild can reassign ownership on /persist and /home.
           "/var/lib/nixos"
           "/var/log"
+          # Holds the timestamps behind timerConfig.Persistent. On a tmpfs root
+          # every timer would otherwise believe it had never run and fire on
+          # each boot, which is the opposite of a catch-up guarantee.
+          "/var/lib/systemd"
         ]
         ++ config.persistentDirectories;
         files = [ "/etc/machine-id" ] ++ config.persistentFiles;
       };
+
+      # Persisted parent directories are created 0755 root:root, but systemd
+      # creates this one 0700 and ignores it already existing, so DynamicUser
+      # state would stay world-traversable once impermanence has made it.
+      systemd.tmpfiles.rules = [ "d /var/lib/private 0700 root root - -" ];
     };
 }

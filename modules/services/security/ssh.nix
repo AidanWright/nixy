@@ -8,10 +8,6 @@
   flake.aspects.services.security.ssh.nixos =
     { ... }:
     {
-      # sops-nix derives the host age identity from the SSH host key; losing
-      # /etc/ssh makes all secrets permanently unreadable.
-      persistentDirectories = [ "/etc/ssh" ];
-
       services.openssh = {
         enable = true;
         # Firewall is opened per-interface below instead.

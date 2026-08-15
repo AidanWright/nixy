@@ -56,6 +56,10 @@ Don’t use a conversational tone, as it distracts from the content. For example
 
 - [treefmt](): Formats all code. Must be run before commiting. Also creates headers at top of file that contain the information of what the file does. This is the only place in the file where a description of *what* the code does should be. Following the [rules](#rules), every other comment in the file must be an description of *why* the code does. These headers should include any commands exposed by the file and give a general overview without being verbose. Concise is always better.
 
+- MCP servers: Enabled servers are declared in `modules/programs/cli/claude.nix`. Only `nixos` and `playwright` run, because native tools already cover the rest. Enable a new server only when no native tool does the job.
+    - Use the `nixos` server for every question about a nixpkgs package, an attribute path, a NixOS / home-manager / nix-darwin option, a channel, or a store path. Query it instead of answering from memory; training data lags nixpkgs by months.
+    - Use `playwright` to read JavaScript-heavy pages and sites that block plain scraping (for example Reddit), where the native fetch returns nothing useful.
+
 ## Commands
 
 ```bash

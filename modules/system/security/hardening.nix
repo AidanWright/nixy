@@ -158,8 +158,6 @@
               /usr/bin/fdesetup list | awk -F ',' '{print $1}'
 
               # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-system-diagnostic-and-usage-data-reporting
-              defaults write com.apple.CrashReporter DialogType none
-              defaults write com.apple.CrashReporter DialogType crashreport
 
               # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#volume-ownership-secure-token
               # if ! sudo sysadminctl -secureTokenStatus "$(id -un)" | /usr/bin/grep -q 'ENABLED'; then

@@ -3,6 +3,9 @@
 # Configures sops-nix for NixOS secrets management.
 ################################################################################
 { inputs, ... }:
+let
+  hostIdentityKey = "/etc/ssh/ssh_host_ed25519_key";
+in
 {
   flake-file.inputs.sops-nix = {
     url = "github:Mic92/sops-nix";
@@ -22,9 +25,10 @@
         unstable.ssh-to-pgp
       ];
 
-      # Derives the age decryption key from the host's SSH host key so no
-      # separate key management is needed.
-      sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      sops.age.sshKeyPaths = [ hostIdentityKey ];
+
+      persistentFiles = [ hostIdentityKey ];
+      services.openssh.generateHostKeys = true;
     };
 
   flake.aspects.security.sops.darwin =
@@ -41,7 +45,7 @@
         unstable.age-plugin-yubikey
       ];
 
-      sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      sops.age.sshKeyPaths = [ hostIdentityKey ];
     };
 
   # Home-manager secrets decrypt at login with a disposable per-user age key

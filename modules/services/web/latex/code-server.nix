@@ -137,20 +137,22 @@
               # setgid bit (2770) ensures new files inherit the latex group so
               # both codeserver and aidanwright own what they create.
               "d /srv/latex 2770 aidanwright latex - -"
+
+              # The default ACL grants group latex full access to everything
+              # created here regardless of the creating process's umask, which
+              # the setgid bit alone does not do. The A+ argument needs its own
+              # `default:` prefix; without it systemd-tmpfiles silently sets no
+              # default ACL at all.
+              "a+ /srv/latex - - - - g:latex:rwx"
+              "A+ /srv/latex - - - - default:g:latex:rwx"
+
+              # tmpfiles creates missing parents as root:root 0755, so the
+              # directories must be declared before the file that lives in them
+              # or code-server cannot write its own settings back.
+              "d /var/lib/codeserver/code-server 0700 codeserver codeserver - -"
+              "d /var/lib/codeserver/code-server/User 0700 codeserver codeserver - -"
               "C /var/lib/codeserver/code-server/User/settings.json 0644 codeserver codeserver - ${defaultSettings}"
             ];
-
-            # Default ACL on /srv/latex grants group latex full rwx on all new
-            # files and subdirectories regardless of which user creates them.
-            # systemd-tmpfiles does not support multi-entry ACL rules reliably
-            # across all systemd versions, so activation scripts are used instead.
-            system.activationScripts.latexDirAcl = {
-              deps = [ "users" ];
-              text = ''
-                ${pkgs.acl}/bin/setfacl -m g:latex:rwx /srv/latex
-                ${pkgs.acl}/bin/setfacl -d -m g:latex:rwx /srv/latex
-              '';
-            };
 
             systemd.services.code-server.serviceConfig = {
               # Block any exec inside the process from gaining new privileges via

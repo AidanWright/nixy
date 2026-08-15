@@ -22,7 +22,5 @@
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII8kymY/zb/avbDXLvFE+U6S1jy0lsSrBBfQQ5hjKkdD mail@aidanwright.dev"
         ];
       };
-
-      security.sudo.wheelNeedsPassword = false;
     };
 }

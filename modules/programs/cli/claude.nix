@@ -18,20 +18,10 @@
     {
       pkgs,
       lib,
-      config,
       ...
     }:
     let
       isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
-
-      filesystemRoots =
-        if isDarwin then
-          [
-            "/etc/nix-darwin"
-            "/Users/aidanwright/Library/CloudStorage/ZohoWorkDriveTrueSync-AidanWright/General/Code"
-          ]
-        else
-          [ config.home.homeDirectory ];
     in
     {
       imports = [ inputs.mcp-servers-nix.homeManagerModules.default ];
@@ -39,15 +29,8 @@
       home.packages = lib.optionals isDarwin [ pkgs.darwinApps.claude-desktop ];
 
       mcp-servers.programs = {
-        filesystem = {
-          enable = true;
-          args = filesystemRoots;
-        };
-        fetch.enable = true;
-        git.enable = true;
-        memory.enable = true;
-        sequential-thinking.enable = true;
-        nixos.enable = true;
+        nixos.enable = true; # live nixpkgs/option search; fresher than a pinned `nix search`
+        playwright.enable = true; # real browser for JavaScript-heavy or anti-scraping sites
       };
 
       programs.mcp.enable = true;

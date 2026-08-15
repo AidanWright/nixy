@@ -7,29 +7,45 @@
 { ... }:
 {
   flake.aspects.services.monitor.honeypot.nixos =
-    { ... }:
+    {
+      config,
+      lib,
+      ...
+    }:
+    let
+      tarpitPort = config.services.endlessh-go.port;
+
+      # Emitted once to add and once to delete, so the two directions cannot
+      # drift apart. These are iptables commands, so they are silently dropped
+      # if networking.nftables.enable is ever turned on.
+      redirectToTarpit =
+        op: suffix:
+        lib.concatMapStringsSep "\n" (rule: "iptables -t nat -${op} PREROUTING ${rule}${suffix}") [
+          "-i lo -p tcp --dport 22 -j RETURN"
+          "! -i tailscale0 -p tcp --dport 22 -j REDIRECT --to-ports ${toString tarpitPort}"
+        ];
+    in
     {
       services.endlessh-go = {
         enable = true;
         listenAddress = "0.0.0.0";
-        # Run on 2222; public :22 is redirected here by the NAT rule below.
+        # Public :22 is redirected here by the NAT rule below.
         port = 2222;
         prometheus.enable = true;
+
+        # nat/PREROUTING rewrites the destination port before the filter chain
+        # runs, so the firewall sees the tarpit port rather than 22. Without
+        # this the redirected packets are rejected and the tarpit never runs.
+        openFirewall = true;
       };
 
       # Redirect TCP/22 arriving on any non-Tailscale, non-loopback interface to
-      # the tarpit on 2222. This lets real sshd keep :22 — the interface firewall
+      # the tarpit. This lets real sshd keep :22 — the interface firewall
       # (services.ssh) already limits sshd to tailscale0 — while public scanners
       # reaching any other interface are silently tarpitted without knowing a host
       # IP or public interface name.
-      networking.firewall.extraCommands = ''
-        iptables -t nat -A PREROUTING -i lo -p tcp --dport 22 -j RETURN
-        iptables -t nat -A PREROUTING ! -i tailscale0 -p tcp --dport 22 -j REDIRECT --to-ports 2222
-      '';
-      networking.firewall.extraStopCommands = ''
-        iptables -t nat -D PREROUTING -i lo -p tcp --dport 22 -j RETURN 2>/dev/null || true
-        iptables -t nat -D PREROUTING ! -i tailscale0 -p tcp --dport 22 -j REDIRECT --to-ports 2222 2>/dev/null || true
-      '';
+      networking.firewall.extraCommands = redirectToTarpit "A" "";
+      networking.firewall.extraStopCommands = redirectToTarpit "D" " 2>/dev/null || true";
 
       # Expose endlessh-go Prometheus metrics (default port 2112) only over Tailscale.
       networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 2112 ];

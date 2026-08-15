@@ -15,7 +15,6 @@
         includes = with aspects; [
           #security.hardening
           security.impermanence
-          security.sops
           services.security.tailscale
           #services.security.ssh
           #services.security.fail2ban

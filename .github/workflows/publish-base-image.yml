@@ -1,7 +1,3 @@
-# Publishes the tart base image by re-annotating it with GITHUB_TOKEN.
-# ghcr.io links the package to this repository and inherits its public
-# visibility when the manifest is written with a GITHUB_TOKEN.
-#
 # Trigger this workflow after each nix run --impure .#tart-base-image run.
 name: Publish Base Image
 
@@ -21,13 +17,13 @@ jobs:
       contents: read
 
     steps:
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: imjasonh/setup-crane@v0.4
+      - uses: imjasonh/setup-crane@31b88efe9de28ae0ffa220711af4b60be9435f6e # v0.4
 
       - name: Link package to repository
         env:

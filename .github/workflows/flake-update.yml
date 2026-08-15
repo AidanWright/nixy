@@ -1,0 +1,35 @@
+# Refreshes flake inputs daily and merges the result only once CI is green.
+#
+# Requires a FLAKE_UPDATE_TOKEN secret: with contents:write and pull-requests:write.
+name: Update flake inputs
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - uses: DeterminateSystems/determinate-nix-action@61cbfe2efc2d4e7a8a6d56967c3c1058e846c858 # v3
+
+      - uses: DeterminateSystems/update-flake-lock@c5930b397a673a70ca70be06020e943aeac310a1 # v27
+        id: update
+        with:
+          token: ${{ secrets.FLAKE_UPDATE_TOKEN }}
+          branch: flake-update
+          pr-title: "chore(deps): update flake inputs"
+          pr-labels: dependencies
+
+      - name: Queue for merge once checks pass
+        if: steps.update.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.FLAKE_UPDATE_TOKEN }}
+        run: gh pr merge --squash --auto "${{ steps.update.outputs.pull-request-number }}"

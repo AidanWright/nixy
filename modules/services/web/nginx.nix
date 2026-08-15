@@ -15,16 +15,6 @@
       services.nginx = {
         enable = true;
 
-        virtualHosts."frame.aidanwright.dev" = {
-          forceSSL = true;
-          enableACME = true;
-
-          locations."/" = {
-            proxyPass = "http://127.0.0.1:8000";
-            proxyWebsockets = true;
-          };
-        };
-
         virtualHosts."git.aidanwright.dev" = {
           forceSSL = true;
           enableACME = true;

@@ -10,14 +10,19 @@
 #   Before provisioning, generate the host's SSH key and derive its age key so
 #   sops secrets are decryptable on first boot.
 #
+#   The key goes under /persist, not /etc: an impermanent host has a tmpfs root,
+#   so /persist is the only real filesystem at install time and anything written
+#   elsewhere is discarded on first boot. The impermanence aspect bind-mounts it
+#   back to /etc/ssh, which is where sops reads it.
+#
 #   1. Generate the host key:
-#        install -d -m755 /tmp/biggy/etc/ssh
-#        ssh-keygen -t ed25519 -N "" -f /tmp/biggy/etc/ssh/ssh_host_ed25519_key
+#        install -d -m755 /tmp/biggy/persist/etc/ssh
+#        ssh-keygen -t ed25519 -N "" -f /tmp/biggy/persist/etc/ssh/ssh_host_ed25519_key
 #
 #   2. Get the age key and add it to .sops.yaml:
-#        ssh-to-age < /tmp/biggy/etc/ssh/ssh_host_ed25519_key.pub
+#        ssh-to-age < /tmp/biggy/persist/etc/ssh/ssh_host_ed25519_key.pub
 #      Add the output as &biggy in .sops.yaml and re-encrypt any biggy secrets:
-#        sops updatekeys modules/hosts/biggy/<secret>.yaml
+#        sops updatekeys secrets/biggy/<name>.secret.yaml
 #
 #   3. Provision (the --extra-files flag injects the key before install).
 #      First argument is the host, the rest pass through to nixos-anywhere:

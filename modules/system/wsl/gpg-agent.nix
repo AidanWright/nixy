@@ -1,12 +1,15 @@
-# modules/programs/cli/gpg-wsl.nix
+# modules/system/wsl/gpg-agent.nix
 ################################################################################
 # WSL-only: signs with a YubiKey on the Windows host. WSL2 can't reach smart
 # cards, so socat relays gpg's agent socket to the Windows (Gpg4win) agent via
 # wsl2-ssh-pageant.exe. Import your public key once: `gpg --import`.
+#
+# Deliberately outside the `programs` namespace: hosts include `programs.all`,
+# and a `.all` aggregate sweeps in every descendant regardless of platform.
 ################################################################################
 { ... }:
 {
-  flake.aspects.programs.gpg-wsl.homeManager =
+  flake.aspects.wsl.gpg-agent.homeManager =
     { pkgs, ... }:
     let
       relayBin = pkgs.fetchurl {
@@ -33,10 +36,12 @@
       '';
     in
     {
+      # The relay shells out to cmd.exe, so the aspect is meaningless anywhere
+      # a Windows host is not underneath it.
       assertions = [
         {
-          assertion = !pkgs.stdenv.hostPlatform.isDarwin;
-          message = "programs.gpg-wsl is WSL-only.";
+          assertion = pkgs.stdenv.hostPlatform.isLinux;
+          message = "wsl.gpg-agent requires a Linux host running under WSL.";
         }
       ];
 

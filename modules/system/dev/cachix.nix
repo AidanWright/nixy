@@ -32,6 +32,9 @@
       (lib.mkIf (!config.determinateNix.enable) { nix.settings = caches; })
     ];
 
+  # Trusting this cache makes whoever holds its push token able to replace any
+  # store path the host fetches, including its own system closure. Treat
+  # CACHIX_AUTH_TOKEN as a root credential for every host
   flake.aspects.dev.cachix.nixos =
     { pkgs, ... }:
     {

@@ -1,0 +1,99 @@
+# Builds and tests every host on its own architecture, then publishes a release
+# from green commits on main.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  check:
+    name: check (${{ matrix.system }})
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - system: x86_64-linux
+            runner: ubuntu-latest
+            kvm: true
+          - system: aarch64-linux
+            runner: ubuntu-24.04-arm
+            kvm: false
+          - system: aarch64-darwin
+            runner: macos-15
+            kvm: false
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      # NixOS VM tests boot a real guest. GitHub grants /dev/kvm on x86 Linux
+      # runners but the device is root-owned, and it is absent entirely on the
+      # arm64 runners.
+      - name: Enable KVM
+        if: matrix.kvm
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: DeterminateSystems/determinate-nix-action@61cbfe2efc2d4e7a8a6d56967c3c1058e846c858 # v3
+
+      - uses: cachix/cachix-action@3ba601ff5bbb07c7220846facfa2cd81eeee15a1 # v16
+        with:
+          name: aidanwright
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build checks
+        run: |
+          nix run nixpkgs#nix-fast-build -- \
+            --flake ".#checks.${{ matrix.system }}" \
+            --no-nom \
+            --skip-cached
+
+  release:
+    name: release
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+
+      - name: Tag this commit
+        id: tag
+        run: |
+          date=$(date -u +%Y.%m.%d)
+          tag=$date
+          n=1
+          while git rev-parse "refs/tags/$tag" >/dev/null 2>&1; do
+            n=$((n + 1))
+            tag="$date.$n"
+          done
+          git tag "$tag"
+          git push origin "$tag"
+          echo "tag=$tag" >>"$GITHUB_OUTPUT"
+
+      - name: Advance the release branch
+        run: git push origin HEAD:release
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${{ steps.tag.outputs.tag }}" --generate-notes

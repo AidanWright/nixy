@@ -1,0 +1,4 @@
+# Review is requested from the owner for every path. The main ruleset does not
+# require approval, so this requests rather than blocks; turn on "Require review
+# from Code Owners" in the branch ruleset to enforce it.
+* @AidanWright
