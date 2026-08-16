@@ -1,6 +1,9 @@
 # Keeps the SHA-pinned actions in .github/workflows current. Pinning without
 # this leaves them frozen at whatever commit was current when they were pinned,
 # including any security fix they later receive.
+#
+# auto-merge.yml arms every pull request labelled "dependencies", so these land
+# on their own once CI is green.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -11,3 +14,9 @@ updates:
       prefix: chore(deps)
     labels:
       - dependencies
+    groups:
+      # One pull request a week. Ungrouped, every bump edits the same workflow
+      # files, so each merge leaves the rest conflicted and waiting on a rebase.
+      actions:
+        patterns:
+          - "*"

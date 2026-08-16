@@ -1,16 +1,22 @@
 # Builds and tests every host on its own architecture, then publishes a release
 # from green commits on main.
+#
+# The `ci` job is the one status check the main ruleset requires. Requiring a
+# single aggregate rather than each matrix leg means adding an architecture
+# needs no change to the ruleset, and a leg that is cancelled or never starts
+# still blocks the merge.
 name: CI
 
 on:
   pull_request:
   push:
     branches: [main]
-  workflow_call:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Superseding a pull request run wastes nothing, but cancelling a main run
+  # abandons the release it was about to publish.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions: {}
 
@@ -64,10 +70,25 @@ jobs:
             --no-nom \
             --skip-cached
 
+  ci:
+    name: ci
+    needs: check
+    # A required check that is skipped counts as passed, so this job always
+    # runs and reads the matrix result rather than inheriting it.
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every architecture to be green
+        env:
+          RESULT: ${{ needs.check.result }}
+        run: |
+          echo "check matrix: $RESULT"
+          [ "$RESULT" = success ]
+
   release:
     name: release
-    needs: check
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write

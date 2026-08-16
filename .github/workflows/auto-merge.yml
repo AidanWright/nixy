@@ -1,0 +1,50 @@
+# Arms auto-merge on every dependency pull request. GitHub then squashes the
+# branch into main on its own once the checks the main ruleset requires pass,
+# and deletes the branch afterwards.
+#
+# Both dependabot and the flake update label their pull requests
+# "dependencies", so one workflow covers both.
+#
+# The step uses a personal access token rather than GITHUB_TOKEN on purpose.
+# GitHub starts no new workflow run for a merge made with GITHUB_TOKEN, so CI
+# and the release would never run on main.
+#
+# Requires FLAKE_UPDATE_TOKEN in the Actions secrets and, because a run started
+# by dependabot reads only the dependabot store, in the dependabot secrets too.
+name: Auto-merge
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, ready_for_review]
+
+permissions: {}
+
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  arm:
+    name: arm
+    # A pull request from a fork is handed no secrets, so it cannot be armed
+    # and is left for review instead.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository
+      && !github.event.pull_request.draft
+      && contains(github.event.pull_request.labels.*.name, 'dependencies')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.FLAKE_UPDATE_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Re-arming an already armed pull request is an error, and every push
+          # to the branch replays this workflow.
+          armed=$(gh pr view "$NUMBER" --json autoMergeRequest --jq '.autoMergeRequest != null')
+          if [ "$armed" = true ]; then
+            echo "auto-merge already enabled on #$NUMBER"
+          else
+            gh pr merge --squash --auto "$NUMBER"
+          fi
