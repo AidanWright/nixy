@@ -1,6 +1,12 @@
 # Refreshes flake inputs daily and merges the result only once CI is green.
 #
-# Requires a FLAKE_UPDATE_TOKEN secret: with contents:write and pull-requests:write.
+# The update and the flattening land in one commit because check-flake-file
+# diffs the committed lock against a freshly pruned one, so a plain
+# `nix flake update` opens a pull request that can never pass.
+#
+# Requires FLAKE_UPDATE_TOKEN (fine-grained PAT, contents:write and
+# pull-requests:write), "Allow auto-merge" on the repository, and a ruleset on
+# main listing the CI checks as required.
 name: Update flake inputs
 
 on:
@@ -8,28 +14,79 @@ on:
     - cron: "0 4 * * *"
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
+
+concurrency:
+  group: flake-update
+  cancel-in-progress: false
 
 jobs:
   update:
+    name: update
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          # A push made with the default GITHUB_TOKEN does not trigger CI.
+          token: ${{ secrets.FLAKE_UPDATE_TOKEN }}
 
       - uses: DeterminateSystems/determinate-nix-action@61cbfe2efc2d4e7a8a6d56967c3c1058e846c858 # v3
 
-      - uses: DeterminateSystems/update-flake-lock@c5930b397a673a70ca70be06020e943aeac310a1 # v27
+      - name: Update inputs and flatten the lock
         id: update
-        with:
-          token: ${{ secrets.FLAKE_UPDATE_TOKEN }}
-          branch: flake-update
-          pr-title: "chore(deps): update flake inputs"
-          pr-labels: dependencies
+        run: |
+          # Runners default to `bash -e` without pipefail, which would hide a
+          # failed update behind tee's exit code.
+          set -o pipefail
 
-      - name: Queue for merge once checks pass
-        if: steps.update.outputs.pull-request-number != ''
+          git switch --force-create flake-update
+          nix flake update 2>&1 | tee /tmp/update.log
+          nix run .#write-flake
+
+          git add --all
+          if git diff --cached --quiet; then
+            echo "changed=false" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --message "chore(deps): update flake inputs"
+          git push --force origin flake-update
+
+          echo "changed=true" >>"$GITHUB_OUTPUT"
+
+      - name: Open or refresh the pull request
+        if: steps.update.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.FLAKE_UPDATE_TOKEN }}
-        run: gh pr merge --squash --auto "${{ steps.update.outputs.pull-request-number }}"
+        run: |
+          set -o pipefail
+
+          {
+            echo "Automated flake input update."
+            echo
+            echo '```'
+            cat /tmp/update.log
+            echo '```'
+          } >/tmp/pr-body.md
+
+          number=$(gh pr list --head flake-update --state open --json number --jq '.[0].number // empty')
+
+          # A force-push refreshes an open pull request in place.
+          if [ -z "$number" ]; then
+            number=$(gh pr create \
+              --base main \
+              --head flake-update \
+              --title "chore(deps): update flake inputs" \
+              --label dependencies \
+              --body-file /tmp/pr-body.md | sed 's|.*/||')
+          else
+            gh pr edit "$number" --body-file /tmp/pr-body.md
+          fi
+
+          gh pr merge --squash --auto "$number"
