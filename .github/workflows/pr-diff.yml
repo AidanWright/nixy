@@ -1,3 +1,9 @@
+# Comments on a pull request with the packages it adds, drops, or changes in
+# each host closure, so a lock bump shows what it actually moves.
+#
+# Only host closures are diffed. checks.nix names those after the configuration
+# they come from, while the rest of the checks are lint derivations whose
+# contents say nothing useful.
 name: Closure diff
 
 on:
@@ -29,27 +35,49 @@ jobs:
           name: aidanwright
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Build both closures
+      - name: Diff every closure this runner can build
         id: build
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
+          SYSTEM: aarch64-linux
         run: |
-          target='checks.aarch64-linux.nixos-biggy'
-          base=$(nix build --no-link --print-out-paths "git+file://$PWD?rev=$BASE#$target")
-          head=$(nix build --no-link --print-out-paths ".#$target")
+          set -o pipefail
+
+          base="git+file://$PWD?rev=$BASE"
+
+          closures() {
+            nix eval --json "$1#checks.$SYSTEM" --apply builtins.attrNames \
+              | jq -r '.[]' \
+              | grep -E '^(nixos|darwin|home)-' \
+              | sort
+          }
+
+          # A host added or removed by the pull request has nothing to compare
+          # against, so only the closures both sides define are diffed.
+          comm -12 <(closures "$base") <(closures .) >/tmp/names
+
+          : >/tmp/diff
+          while read -r name; do
+            before=$(nix build --no-link --print-out-paths "$base#checks.$SYSTEM.$name")
+            after=$(nix build --no-link --print-out-paths ".#checks.$SYSTEM.$name")
+            {
+              echo "### $name"
+              echo '```'
+              nix store diff-closures "$before" "$after"
+              echo '```'
+            } >>/tmp/diff
+          done </tmp/names
+
           {
-            echo 'diff<<EOF'
-            nix store diff-closures "$base" "$head"
-            echo EOF
+            echo 'diff<<GITHUB_OUTPUT_EOF'
+            cat /tmp/diff
+            echo GITHUB_OUTPUT_EOF
           } >>"$GITHUB_OUTPUT"
 
       - uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
         with:
           header: closure-diff
           message: |
-            ### Package changes on `biggy`
+            ## Package changes
 
-            ```
             ${{ steps.build.outputs.diff }}
-            ```

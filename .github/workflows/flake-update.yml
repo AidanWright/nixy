@@ -1,12 +1,13 @@
-# Refreshes flake inputs daily and merges the result only once CI is green.
+# Refreshes flake inputs daily and opens a pull request with the result.
+# auto-merge.yml arms the pull request, and CI decides whether it lands.
 #
 # The update and the flattening land in one commit because check-flake-file
 # diffs the committed lock against a freshly pruned one, so a plain
 # `nix flake update` opens a pull request that can never pass.
 #
 # Requires FLAKE_UPDATE_TOKEN (fine-grained PAT, contents:write and
-# pull-requests:write), "Allow auto-merge" on the repository, and a ruleset on
-# main listing the CI checks as required.
+# pull-requests:write) and the repository settings that `nix run
+# .#repo-settings` applies.
 name: Update flake inputs
 
 on:
@@ -65,8 +66,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.FLAKE_UPDATE_TOKEN }}
         run: |
-          set -o pipefail
-
           {
             echo "Automated flake input update."
             echo
@@ -79,14 +78,12 @@ jobs:
 
           # A force-push refreshes an open pull request in place.
           if [ -z "$number" ]; then
-            number=$(gh pr create \
+            gh pr create \
               --base main \
               --head flake-update \
               --title "chore(deps): update flake inputs" \
               --label dependencies \
-              --body-file /tmp/pr-body.md | sed 's|.*/||')
+              --body-file /tmp/pr-body.md
           else
             gh pr edit "$number" --body-file /tmp/pr-body.md
           fi
-
-          gh pr merge --squash --auto "$number"
