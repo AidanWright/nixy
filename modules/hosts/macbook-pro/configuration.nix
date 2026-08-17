@@ -25,10 +25,14 @@
         ];
 
         darwin =
-          { ... }:
+          { lib, ... }:
           {
             networking.hostName = "macbook-pro";
             system.primaryUser = "aidanwright";
+
+            nix-homebrew.user = "admin";
+
+            determinateNix.customSettings.sandbox = lib.mkForce "relaxed";
           };
       };
     };

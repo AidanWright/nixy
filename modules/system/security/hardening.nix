@@ -91,13 +91,17 @@
               };
             };
 
-            # sudo: biometric auth, no grace period, per-tty tickets.
+            # sudo: biometric auth, short grace period, per-tty tickets.
             security.pam.services.sudo_local = {
               enable = true;
               touchIdAuth = true;
             };
+            # A zero timeout re-prompts on every escalation. Homebrew activation
+            # escalates once per cask while mas runs alongside it, so two
+            # processes end up reading the same tty and split the typed
+            # password between them. A short ticket keeps one prompt per run.
             environment.etc."sudoers.d/hardening".text = ''
-              Defaults timestamp_timeout=0
+              Defaults timestamp_timeout=5
               Defaults tty_tickets
             '';
 

@@ -66,11 +66,10 @@
     # This hack bypass that restriction. In the past there was also some worry about adding root
     # to the knownUsers, but *could* be outdated; see:
     # https://github.com/nix-darwin/nix-darwin/issues/1237
-    #
-    # Instead, we use a factory flake pattern and enable in user module.
-    system.activationScripts.postActivation.text = lib.mkAfter ''
+    system.activationScripts.preActivation.text = lib.mkAfter ''
       fishPath="/run/current-system/sw/bin/fish"
-      if [ "$(dscl . -read "/Users/${user}" UserShell 2>/dev/null | awk '{print $2}')" != "$fishPath" ]; then
+      if [ -x "$fishPath" ] &&
+         [ "$(dscl . -read "/Users/${user}" UserShell 2>/dev/null | awk '{print $2}')" != "$fishPath" ]; then
         echo "setting ${user}'s login shell to fish..." >&2
         dscl . -create "/Users/${user}" UserShell "$fishPath"
       fi

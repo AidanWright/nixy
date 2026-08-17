@@ -16,16 +16,21 @@
   };
 
   flake.aspects.homebrew.darwin =
-    { config, ... }:
+    { config, lib, ... }:
     {
       imports = [ inputs.nix-homebrew.darwinModules.nix-homebrew ];
 
       homebrew.enable = true;
+      # `brew bundle` runs as this user, so it must match the prefix owner
+      homebrew.user = config.nix-homebrew.user;
       # Without upgrade, `brew bundle` only installs missing casks; it never
       # upgrades an already-installed one when its tap declares a newer version.
       homebrew.onActivation.upgrade = true;
       homebrew.onActivation.cleanup = "zap";
-      homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
+      homebrew.taps = lib.mapAttrsToList (name: _: {
+        inherit name;
+        trusted = true;
+      }) config.nix-homebrew.taps;
 
       nix-homebrew = {
         # Install Homebrew under the default prefix
@@ -34,15 +39,13 @@
         # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
         enableRosetta = true;
 
-        # User owning the Homebrew prefix
-        user = config.system.primaryUser;
+        # typically, the primaryUser will have sudo, but if not, this should be overriden to an account that does
+        # (e.g. admin if using the hardening profile)
+        user = lib.mkDefault config.system.primaryUser;
 
         # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
         mutableTaps = false;
 
-        # Serve cask definitions from the pinned tap in the Nix store rather than
-        # Homebrew's never-refreshed API cache. Official taps are trusted by
-        # default, so no trust entry is needed.
         taps."homebrew/homebrew-cask" = inputs.homebrew-cask;
       };
     };

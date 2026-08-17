@@ -5,7 +5,10 @@
 #
 # NixOS: authenticates headlessly via a sops-encrypted auth key and serves
 # Tailscale SSH only on hosts that do not run the OpenSSH daemon.
-# Darwin: installs the Tailscale app via Homebrew.
+#
+# Darwin: installs the Tailscale app via Homebrew. The app ships its own
+# tailscaled and system extension, so services.tailscale is left off here to
+# avoid a second daemon competing for the same state.
 ################################################################################
 { inputs, ... }:
 {
@@ -18,8 +21,6 @@
         ];
 
         homebrew.casks = [ "tailscale-app" ];
-
-        services.tailscale.enable = true;
       };
 
     nixos =

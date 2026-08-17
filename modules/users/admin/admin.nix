@@ -27,7 +27,10 @@
 
       users.knownUsers = [ "admin" ];
       users.users.admin = {
-        uid = 540;
+        # macOS gives the first Setup Assistant account uid 501 and the initial
+        # Secure Token. Where admin is created later instead, pick a free uid
+        # (540) and follow the manual Secure Token steps above.
+        uid = 501;
         gid = 20; # staff
         name = "admin";
         home = "/Users/admin";

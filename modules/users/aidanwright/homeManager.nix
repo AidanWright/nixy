@@ -26,7 +26,6 @@
           {
             pkgs,
             lib,
-            config,
             ...
           }:
           {
@@ -38,8 +37,6 @@
               if pkgs.stdenv.hostPlatform.isDarwin then "/Users/aidanwright" else "/home/aidanwright"
             );
             home.stateVersion = lib.mkDefault "26.05";
-
-            home.sessionVariables.SOPS_AGE_KEY_FILE = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
             # Signing key + identity are user-specific, so they live here rather
             # than in the shared programs.git aspect (which only enables git).
