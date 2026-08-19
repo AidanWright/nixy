@@ -8,7 +8,16 @@
   flake.aspects.aidanwright.nixos =
     { pkgs, ... }:
     {
-      persistentDirectories = [ "/home/aidanwright" ];
+      # The account sets no createHome, so nothing ever chowns the home away
+      # from impermanence's root:root default and the user cannot write it.
+      persistentDirectories = [
+        {
+          directory = "/home/aidanwright";
+          user = "aidanwright";
+          group = "users";
+          mode = "0700";
+        }
+      ];
 
       programs.fish.enable = true;
 

@@ -94,8 +94,16 @@
             imports = [ (inputs.self.lib.tailscaleOnlyPorts { tcp = [ 4443 ]; }) ];
 
             persistentDirectories = [
+              # /srv/latex is left to the tmpfiles rule below, which runs after
+              # the persisted copy is mounted. createHome does not survive that
+              # mount, so codeserver's home states its ownership here.
               "/srv/latex"
-              "/var/lib/codeserver"
+              {
+                directory = "/var/lib/codeserver";
+                user = "codeserver";
+                group = "codeserver";
+                mode = "0700";
+              }
             ];
 
             users.groups.latex = { };

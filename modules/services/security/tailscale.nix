@@ -24,9 +24,18 @@
       };
 
     nixos =
-      { config, lib, ... }:
+      { pkgs, config, lib, ... }:
       {
-        persistentDirectories = [ "/var/lib/tailscale" ];
+        # Matches upstream's StateDirectoryMode; systemd does not tighten a
+        # state directory that impermanence already created 0755.
+        persistentDirectories = [
+          {
+            directory = "/var/lib/tailscale";
+            user = "root";
+            group = "root";
+            mode = "0700";
+          }
+        ];
 
         sops.secrets.tailscale-auth-key.sopsFile =
           inputs.self + "/secrets/${config.networking.hostName}/tailscale-auth-key.secret.yaml";
@@ -36,6 +45,7 @@
           authKeyFile = config.sops.secrets.tailscale-auth-key.path;
 
           extraSetFlags = [ "--ssh=${lib.boolToString (!config.services.openssh.enable)}" ];
+          package = pkgs.unstable.tailscale;
         };
       };
   };

@@ -2,8 +2,8 @@ keys:
   - &admin    age1yubikey1qwljud7f5szj737zcgszgzlkf6kz6vvekvaz9fuqvsjxq2qwgklfjk72pl8
   - &recovery age10p4jkgdu6w2xd8lwvsrwcgl32eqlutsxmdc6aaheuqyrkm99wces9hxxwy
   ## host keys
-  - &macbook-pro age1vka5ksrr43kzwax9k8rrmjy086tx9dg0ck25xc4x82q7953hz3yqvt3j0u
-  - &biggy    age16w2jpcultk8gxdxvr2knz7p8d229tqla8fk4wduwhk043720r4fqa9lska
+  - &macbook-pro  age1vka5ksrr43kzwax9k8rrmjy086tx9dg0ck25xc4x82q7953hz3yqvt3j0u
+  - &biggy        age146e87tku4tv7p57qd3vxv2a87ac3vg9j7yvfr2hpf22cug88ff9sx3rj89 
   ## HM keys
   - &aidanwright age1l0a4tq8jugn7fa5wn0fhsuv62px5kyfnv7yjfpf56szr27dyxq9s0d6q8c
 

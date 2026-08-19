@@ -24,6 +24,22 @@
           };
         };
         stylix.targets.kitty.enable = true;
+
+        # kitty advertises TERM=xterm-kitty, which any host lacking its terminfo
+        # rejects. Downgrading only for ssh keeps kitty's own capabilities in
+        # local sessions, and `command` avoids the function recursing into
+        # itself the way a fish alias would.
+        programs.fish.functions.ssh = {
+          wraps = "ssh";
+          description = "ssh with a TERM that hosts without kitty's terminfo accept";
+          body = ''
+            if test "$TERM" = xterm-kitty
+                TERM=xterm-256color command ssh $argv
+            else
+                command ssh $argv
+            end
+          '';
+        };
       };
 
       system.activationScripts.postActivation.text = lib.mkAfter ''

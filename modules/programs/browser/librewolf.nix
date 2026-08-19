@@ -71,6 +71,14 @@
               "browser.toolbars.bookmarks.visibility" = "always";
               "browser.tabs.inTitlebar" = 1;
 
+              # LibreWolf inherits Arkenfox defaults that stage downloads in
+              # $TMPDIR and prompt for every save. Files opened straight from
+              # the browser then never leave temp and macOS reaps them.
+              "browser.download.start_downloads_in_tmp_dir" = false;
+              "browser.download.useDownloadDir" = true;
+              # 1 = the platform's own Downloads folder, so no path is hardcoded.
+              "browser.download.folderList" = 1;
+
               # Wipe history and cookies on close. Firefox 128+ renamed these
               # from privacy.clearOnShutdown.* to the _v2 keys below.
               "privacy.sanitize.sanitizeOnShutdown" = true;

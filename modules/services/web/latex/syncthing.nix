@@ -18,7 +18,16 @@
     nixos =
       { ... }:
       {
-        persistentDirectories = [ "/var/lib/syncthing" ];
+        # The nixpkgs module creates this directory only when syncthing runs
+        # as its own default user; running as aidanwright leaves it root-owned.
+        persistentDirectories = [
+          {
+            directory = "/var/lib/syncthing";
+            user = "aidanwright";
+            group = "users";
+            mode = "0700";
+          }
+        ];
 
         # Device IDs are not hardcoded here — pairing is completed once via the
         # GUI over Tailscale after the first deploy.

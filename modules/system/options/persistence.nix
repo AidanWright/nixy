@@ -11,7 +11,7 @@
     { lib, ... }:
     {
       options.persistentDirectories = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
+        type = lib.types.listOf (lib.types.either lib.types.str lib.types.attrs);
         default = [ ];
         description = "Directories to persist across reboots via the impermanence module.";
       };
