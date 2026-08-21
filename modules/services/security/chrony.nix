@@ -9,7 +9,7 @@
 { ... }:
 {
   flake.aspects.services.security.chrony.nixos =
-    { ... }:
+    { lib, ... }:
     {
       services.chrony = {
         enable = true;
@@ -22,5 +22,7 @@
           "ntppool1.time.nl"
         ];
       };
+
+      time.timeZone = lib.mkDefault "America/New_York";
     };
 }

@@ -24,7 +24,12 @@
       };
 
     nixos =
-      { pkgs, config, lib, ... }:
+      {
+        pkgs,
+        config,
+        lib,
+        ...
+      }:
       {
         # Matches upstream's StateDirectoryMode; systemd does not tighten a
         # state directory that impermanence already created 0755.

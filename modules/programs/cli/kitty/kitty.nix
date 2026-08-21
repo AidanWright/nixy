@@ -12,6 +12,8 @@
       ...
     }:
     {
+      environment.systemPackages = [ pkgs.kitty.terminfo ];
+
       home-manager.users.${config.system.primaryUser} = {
         programs.kitty = {
           enable = true;
