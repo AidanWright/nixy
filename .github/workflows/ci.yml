@@ -24,6 +24,9 @@ jobs:
   check:
     name: check (${{ matrix.system }})
     runs-on: ${{ matrix.runner }}
+    # A stalled evaluation otherwise runs until GitHub's 6h ceiling, and the
+    # main concurrency group makes the next push queue behind it.
+    timeout-minutes: 90
     permissions:
       contents: read
     strategy:
@@ -65,7 +68,7 @@ jobs:
 
       - name: Build checks
         run: |
-          nix run nixpkgs#nix-fast-build -- \
+          nix run ".#nix-fast-build" -- \
             --flake ".#checks.${{ matrix.system }}" \
             --no-nom \
             --skip-cached
