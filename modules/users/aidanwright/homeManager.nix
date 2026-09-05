@@ -20,7 +20,7 @@
           programs.eza
           programs.bat
           programs.starship
-          programs.vscode
+          programs.vscode.base
         ];
 
         homeManager =

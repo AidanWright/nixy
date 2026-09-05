@@ -82,6 +82,8 @@
               harddisk = 5;
             };
 
+            networking.wakeOnLan.enable = true;
+
             darwin = {
               hotCorners = {
                 topLeft = "disabled";

@@ -185,7 +185,7 @@
               /usr/sbin/cupsctl --no-share-printers || true
 
               # https://github.com/ernw/hardening/blob/master/operating_system/osx/26/Hardening_Guide-macOS_26_Tahoe_1.0.md#disable-power-nap-and-network-wake
-              /usr/bin/pmset -a womp 0 || true
+              #/usr/bin/pmset -a womp 0 || true
 
               # Touch ID: fall back to the password after 30 min (default is 2 days).
               /usr/bin/bioutil -w -s --btimeout 1800 || true

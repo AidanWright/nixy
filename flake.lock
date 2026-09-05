@@ -557,6 +557,22 @@
         "type": "github"
       }
     },
+    "homebrew-eim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786369495,
+        "narHash": "sha256-S0mEoWM7e2P+YxCmKFRGOY7zkWAs6d82TTKhFIY5i7g=",
+        "owner": "espressif",
+        "repo": "homebrew-eim",
+        "rev": "639f3e6a6d6254e97ca7aad12115178a66108228",
+        "type": "github"
+      },
+      "original": {
+        "owner": "espressif",
+        "repo": "homebrew-eim",
+        "type": "github"
+      }
+    },
     "homebrew-zoho": {
       "flake": false,
       "locked": {
@@ -1208,6 +1224,7 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "homebrew-cask": "homebrew-cask",
+        "homebrew-eim": "homebrew-eim",
         "homebrew-zoho": "homebrew-zoho",
         "impermanence": "impermanence",
         "import-tree": "import-tree",

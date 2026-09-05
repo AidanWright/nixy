@@ -45,6 +45,11 @@
       flake = false;
     };
 
+    homebrew-eim = {
+      url = "github:espressif/homebrew-eim";
+      flake = false;
+    };
+
     homebrew-zoho = {
       url = "github:AidanWright/homebrew-zoho";
       flake = false;
