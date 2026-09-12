@@ -28,7 +28,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    flake-file.url = "github:vic/flake-file";
+    flake-file.url = "github:denful/flake-file";
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -57,7 +57,7 @@
 
     impermanence.url = "github:nix-community/impermanence";
 
-    import-tree.url = "github:vic/import-tree";
+    import-tree.url = "github:denful/import-tree";
 
     mcp-servers-nix = {
       url = "github:natsukium/mcp-servers-nix";
