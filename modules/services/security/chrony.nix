@@ -21,6 +21,8 @@
           "time.cloudflare.com"
           "ntppool1.time.nl"
         ];
+
+        extraFlags = [ "-s" ];
       };
 
       time.timeZone = lib.mkDefault "America/New_York";

@@ -45,13 +45,21 @@
         sops.secrets.tailscale-auth-key.sopsFile =
           inputs.self + "/secrets/${config.networking.hostName}/tailscale-auth-key.secret.yaml";
 
-        services.tailscale = {
-          enable = true;
-          authKeyFile = config.sops.secrets.tailscale-auth-key.path;
+        services.tailscale =
+          let
+            sshFlag = "--ssh=${lib.boolToString (!config.services.openssh.enable)}";
+          in
+          {
+            enable = true;
+            authKeyFile = config.sops.secrets.tailscale-auth-key.path;
 
-          extraSetFlags = [ "--ssh=${lib.boolToString (!config.services.openssh.enable)}" ];
-          package = pkgs.unstable.tailscale;
-        };
+            # `tailscale up` aborts when a pref it does not mention would change,
+            # so the login path must repeat whatever `tailscale set` applies.
+            extraUpFlags = [ sshFlag ];
+            extraSetFlags = [ sshFlag ];
+
+            package = pkgs.unstable.tailscale;
+          };
       };
   };
 }

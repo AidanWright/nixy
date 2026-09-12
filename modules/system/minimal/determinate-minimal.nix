@@ -38,6 +38,12 @@
           # Enables parallel evaluation (remove this setting or set the value to 1 to disable)
           eval-cores = 0;
 
+          # Nix mangles case-colliding file names when it unpacks a store path on
+          # darwin. The native Linux builder shares this store, so a Linux build
+          # reading such a path sees the mangled name and fails. Safe to disable
+          # because the installer puts the store on a case-sensitive APFS volume.
+          use-case-hack = false;
+
           extra-experimental-features = [
             "build-time-fetch-tree" # Enables build-time flake inputs
             "parallel-eval" # Enables parallel evaluation

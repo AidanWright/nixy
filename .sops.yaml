@@ -3,7 +3,7 @@ keys:
   - &recovery age10p4jkgdu6w2xd8lwvsrwcgl32eqlutsxmdc6aaheuqyrkm99wces9hxxwy
   ## host keys
   - &macbook-pro  age1vka5ksrr43kzwax9k8rrmjy086tx9dg0ck25xc4x82q7953hz3yqvt3j0u
-  - &biggy        age146e87tku4tv7p57qd3vxv2a87ac3vg9j7yvfr2hpf22cug88ff9sx3rj89 
+  - &biggy        age1ezm34agl38g0sk2h5jq02jfsdaysygqn8jc560gpk7xlzug4yq4q5yaesm 
   ## HM keys
   - &aidanwright age1l0a4tq8jugn7fa5wn0fhsuv62px5kyfnv7yjfpf56szr27dyxq9s0d6q8c
 
