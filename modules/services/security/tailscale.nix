@@ -53,8 +53,6 @@
             enable = true;
             authKeyFile = config.sops.secrets.tailscale-auth-key.path;
 
-            # `tailscale up` aborts when a pref it does not mention would change,
-            # so the login path must repeat whatever `tailscale set` applies.
             extraUpFlags = [ sshFlag ];
             extraSetFlags = [ sshFlag ];
 

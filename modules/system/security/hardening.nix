@@ -223,19 +223,19 @@
               sudo.enable = false;
               # removes the setuid bit making the commands unusable
               wrappers = {
-                  su.enable = lib.mkForce false;
-                  sudoedit.enable = lib.mkForce false;
-                  sg.enable = lib.mkForce false;
-                  fusermount.enable = lib.mkForce false;
-                  fusermount3.enable = lib.mkForce false;
-                  pkexec.setuid = lib.mkForce false;
-                  newgrp.setuid = lib.mkForce false;
-                  newgidmap.setuid = lib.mkForce false;
-                  newuidmap.setuid = lib.mkForce false;
-                  # `mount` Needed for `fileSystems.options`
-                  # mount.enable = lib.mkForce false;
-                  # Optional: if you disable mount, disable umount as well
-                  # umount.enable = lib.mkForce false;
+                su.enable = lib.mkForce false;
+                sudoedit.enable = lib.mkForce false;
+                sg.enable = lib.mkForce false;
+                fusermount.enable = lib.mkForce false;
+                fusermount3.enable = lib.mkForce false;
+                pkexec.setuid = lib.mkForce false;
+                newgrp.setuid = lib.mkForce false;
+                newgidmap.setuid = lib.mkForce false;
+                newuidmap.setuid = lib.mkForce false;
+                # `mount` Needed for `fileSystems.options`
+                # mount.enable = lib.mkForce false;
+                # Optional: if you disable mount, disable umount as well
+                # umount.enable = lib.mkForce false;
               };
               #pam.services.swaylock = {
               #  text = ''
@@ -245,7 +245,7 @@
               #    session include login
               #  '';
               #};
-              };
+            };
           };
       };
     };

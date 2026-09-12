@@ -32,39 +32,54 @@
         description = "Visual Studio Code profiles. Every profile listed here is themed by stylix.";
       };
 
-      config = {
-        vscodeProfiles.default = { };
+      config =
+        let
+          generatesSettings =
+            profile:
+            let
+              inherit (config.programs.vscode.profiles.${profile})
+                userSettings
+                enableUpdateCheck
+                enableExtensionUpdateCheck
+                ;
+            in
+            userSettings != { } || enableUpdateCheck == false || enableExtensionUpdateCheck == false;
 
-        programs.vscode = {
-          enable = true;
-          package = lib.mkForce pkgs.master.vscode;
-          profiles = config.vscodeProfiles;
+          settingsProfiles = lib.filterAttrs (profile: _: generatesSettings profile) config.vscodeProfiles;
+        in
+        {
+          vscodeProfiles.default = { };
+
+          programs.vscode = {
+            enable = true;
+            package = lib.mkForce pkgs.master.vscode;
+            profiles = config.vscodeProfiles;
+          };
+
+          # Extensions persist state into settings.json; the ESP-IDF one fails to
+          # activate when it cannot. Home-manager still generates the content and
+          # rewrites it on every switch.
+          home.file = lib.mapAttrs' (
+            profile: _: lib.nameValuePair (settingsPath profile) { enable = false; }
+          ) settingsProfiles;
+
+          home.activation.vscodeWritableSettings =
+            # linkGeneration removes the previous generation's files, and would
+            # otherwise delete this copy again.
+            lib.hm.dag.entryAfter [ "linkGeneration" ] (
+              lib.concatLines (
+                lib.mapAttrsToList (
+                  profile: _:
+                  let
+                    path = settingsPath profile;
+                  in
+                  "run install -D -m 600 ${config.home.file.${path}.source} ${lib.escapeShellArg path}"
+                ) settingsProfiles
+              )
+            );
+        }
+        // lib.optionalAttrs (options ? stylix) {
+          stylix.targets.vscode.profileNames = lib.attrNames config.vscodeProfiles;
         };
-
-        # Extensions persist state into settings.json; the ESP-IDF one fails to
-        # activate when it cannot. Home-manager still generates the content and
-        # rewrites it on every switch.
-        home.file = lib.mapAttrs' (
-          profile: _: lib.nameValuePair (settingsPath profile) { enable = false; }
-        ) config.vscodeProfiles;
-
-        home.activation.vscodeWritableSettings =
-          # linkGeneration removes the previous generation's files, and would
-          # otherwise delete this copy again.
-          lib.hm.dag.entryAfter [ "linkGeneration" ] (
-            lib.concatLines (
-              lib.mapAttrsToList (
-                profile: _:
-                let
-                  path = settingsPath profile;
-                in
-                "run install -D -m 600 ${config.home.file.${path}.source} ${lib.escapeShellArg path}"
-              ) config.vscodeProfiles
-            )
-          );
-      }
-      // lib.optionalAttrs (options ? stylix) {
-        stylix.targets.vscode.profileNames = lib.attrNames config.vscodeProfiles;
-      };
     };
 }
