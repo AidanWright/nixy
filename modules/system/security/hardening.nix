@@ -4,6 +4,12 @@
 ################################################################################
 { inputs, ... }:
 {
+  flake-file.inputs.nix-mineral = {
+    url = "github:cynicsketch/nix-mineral";
+    inputs.nixpkgs.follows = "nixpkgs";
+    inputs.flake-parts.follows = "flake-parts";
+  };
+
   flake.aspects =
     { aspects, ... }:
     {
@@ -215,6 +221,19 @@
         nixos =
           { lib, ... }:
           {
+            imports = [
+              inputs.nix-mineral.nixosModules.nix-mineral
+            ];
+
+            nix-mineral = {
+              enable = true;
+
+              preset = [
+                "compatibility"
+                "performance"
+              ];
+            };
+
             security = {
               # alias sudo = 'run0'
               run0.enableSudoAlias = true;
@@ -237,14 +256,6 @@
                 # Optional: if you disable mount, disable umount as well
                 # umount.enable = lib.mkForce false;
               };
-              #pam.services.swaylock = {
-              #  text = ''
-              #    auth include login
-              #    account include login
-              #    password include login
-              #    session include login
-              #  '';
-              #};
             };
           };
       };

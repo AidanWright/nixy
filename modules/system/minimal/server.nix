@@ -13,7 +13,7 @@
     {
       minimal.server = {
         includes = with aspects; [
-          #security.hardening
+          security.hardening
           security.impermanence
           services.security.tailscale
           #services.security.ssh

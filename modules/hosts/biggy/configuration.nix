@@ -15,12 +15,20 @@
             minimal.server
             minecraft
             aidanwright
+            aspects.security.luks
           ];
 
         nixos =
           { ... }:
           {
             networking.hostName = "biggy";
+
+            # Initrd needs the NIC up before the disk is unlocked, for both the
+            # Tang fetch and the SSH fallback.
+            boot.initrd.availableKernelModules = [
+              "virtio_net"
+              "virtio_pci"
+            ];
 
             boot.loader.grub = {
               enable = true;
@@ -55,23 +63,29 @@
                   root = {
                     size = "100%";
                     content = {
-                      type = "btrfs";
-                      subvolumes = {
-                        "/nix" = {
-                          mountpoint = "/nix";
-                          mountOptions = [
-                            "compress=zstd"
-                            "noatime"
-                          ];
-                        };
-                        "/persist" = {
-                          mountpoint = "/persist";
-                          mountOptions = [
-                            "compress=zstd"
-                            "noatime"
-                            "nodev"
-                            "nosuid"
-                          ];
+                      type = "luks";
+                      name = "cryptroot";
+                      passwordFile = "/tmp/luks.key";
+                      settings.allowDiscards = true;
+                      content = {
+                        type = "btrfs";
+                        subvolumes = {
+                          "/nix" = {
+                            mountpoint = "/nix";
+                            mountOptions = [
+                              "compress=zstd"
+                              "noatime"
+                            ];
+                          };
+                          "/persist" = {
+                            mountpoint = "/persist";
+                            mountOptions = [
+                              "compress=zstd"
+                              "noatime"
+                              "nodev"
+                              "nosuid"
+                            ];
+                          };
                         };
                       };
                     };

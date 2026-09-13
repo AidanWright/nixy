@@ -78,6 +78,14 @@
 
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
 
+    nix-mineral = {
+      url = "github:cynicsketch/nix-mineral";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
     nix-nvim.url = "https://flakehub.com/f/AidanWright/nix-nvim/*";
 
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
