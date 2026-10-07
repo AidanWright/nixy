@@ -8,15 +8,12 @@
     { aspects, ... }:
     {
       biggy = {
-        includes =
-          with aspects;
-          with services;
-          [
-            minimal.server
-            minecraft
-            aidanwright
-            aspects.security.luks
-          ];
+        includes = with aspects; [
+          minimal.server
+          services.minecraft
+          aidanwright
+          security.luks
+        ];
 
         nixos =
           { ... }:

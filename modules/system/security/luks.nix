@@ -36,6 +36,8 @@
       );
     in
     {
+      environment.systemPackages = [ pkgs.clevis ];
+
       boot.initrd.systemd.network.enable = true;
       boot.kernelParams = [ "ip=dhcp" ];
 

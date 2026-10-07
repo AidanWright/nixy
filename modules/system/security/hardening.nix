@@ -234,6 +234,22 @@
               ];
             };
 
+            # nix-mineral self-bind-mounts these to apply nosuid/nodev/noexec.
+            # Impermanence bind-mounts into the same paths, so stage 1 has to
+            # carry them or its assertion fails.
+            fileSystems =
+              lib.genAttrs
+                [
+                  "/etc"
+                  "/var"
+                  "/var/lib"
+                  "/home"
+                  "/srv"
+                ]
+                (_: {
+                  neededForBoot = true;
+                });
+
             security = {
               # alias sudo = 'run0'
               run0.enableSudoAlias = true;

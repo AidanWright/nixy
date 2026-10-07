@@ -13,7 +13,7 @@
         #"openmtp"
       ];
 
-      homebrew.masApps."Amazon Kindle" = 302584613;
+      #homebrew.masApps."Amazon Kindle" = 302584613;
 
       environment.systemPackages = [
         (pkgs.python3.withPackages (pythonPackages: [ pythonPackages.pip ]))

@@ -1,11 +1,13 @@
 # modules/programs/vscode/latex.nix
 ################################################################################
-# LaTeX authoring profile. The latexmk recipe matches the one code-server runs
-# on biggy (services/web/latex/code-server.nix), so the same document builds the
-# same way whether it is edited locally or over Tailscale.
+# LaTeX authoring profile. Recipes cover lualatex, xelatex and pdflatex, with
+# lualatex the fallback because fontspec refuses to run under pdflatex. A
+# document can override per-file with a `% !TEX program = ...` magic comment.
 #
-# Building needs latexmk on PATH; no TeX distribution is installed by this
-# aspect.
+# Pulls in programs.latex.texlive for latexmk and latexindent, which the build
+# and format-on-save settings below both shell out to, and programs.latex.pdfname
+# for the latexmk wrapper every recipe calls. The wrapper builds like latexmk
+# until a document opts into naming its own PDF; see that aspect for the syntax.
 ################################################################################
 { ... }:
 {
@@ -13,10 +15,48 @@
     { aspects, ... }:
     {
       programs.vscode.latex = {
-        includes = with aspects; [ programs.vscode.base ];
+        includes = with aspects; [
+          programs.vscode.base
+          programs.latex.texlive
+          programs.latex.pdfname
+        ];
 
         homeManager =
           { pkgs, ... }:
+          let
+            engines = [
+              {
+                name = "lualatex";
+                flag = "-lualatex";
+              }
+              {
+                name = "xelatex";
+                flag = "-xelatex";
+              }
+              {
+                name = "pdflatex";
+                flag = "-pdf";
+              }
+            ];
+
+            latexmkTool = engine: {
+              name = "latexmk (${engine.name})";
+              command = "latexmk-pdfname";
+              args = [
+                "-synctex=1"
+                "-interaction=nonstopmode"
+                "-file-line-error"
+                engine.flag
+                "-outdir=%OUTDIR%"
+                "%DOC%"
+              ];
+            };
+
+            recipeFor = engine: {
+              inherit (engine) name;
+              tools = [ "latexmk (${engine.name})" ];
+            };
+          in
           {
             vscodeProfiles.latex = {
               extensions = with pkgs.nix-vscode-extensions.open-vsx; [
@@ -25,34 +65,23 @@
               ];
 
               userSettings = {
-                # Mirrors the recipe in services/web/latex/code-server.nix so a
-                # document builds identically here and on biggy.
                 "latex-workshop.latex.outDir" = "%DIR%";
                 "latex-workshop.latex.recipe.default" = "lastUsed";
-                "latex-workshop.latex.recipes" = [
-                  {
-                    name = "latexmk";
-                    tools = [ "latexmk" ];
-                  }
-                ];
-                "latex-workshop.latex.tools" = [
-                  {
-                    name = "latexmk";
-                    command = "latexmk";
-                    args = [
-                      "-synctex=1"
-                      "-interaction=nonstopmode"
-                      "-file-line-error"
-                      "-pdf"
-                      "-outdir=%OUTDIR%"
-                      "%DOC%"
-                    ];
-                  }
-                ];
-                "latex-workshop.view.pdf.viewer" = "tab";
+                "latex-workshop.latex.recipes" = map recipeFor engines;
+                "latex-workshop.latex.tools" = map latexmkTool engines;
+                "latex-workshop.latex.autoBuild.run" = "onFileChange";
+                "latex-workshop.latex.autoBuild.interval" = 1000;
+                "latex-workshop.latex.autoClean.run" = "onFailed";
 
-                # Build artefacts sit beside the source because outDir is %DIR%;
-                # hiding them keeps the explorer readable.
+                "latex-workshop.view.pdf.viewer" = "tab";
+                "latex-workshop.view.pdf.tab.editorGroup" = "right";
+                "latex-workshop.synctex.afterBuild.enabled" = true;
+                "latex-workshop.view.pdf.internal.synctex.keybinding" = "double-click";
+
+                "latex-workshop.formatting.latex" = "latexindent";
+                "latex-workshop.intellisense.package.enabled" = true;
+                "latex-workshop.bind.enter.key" = true;
+
                 "files.exclude" = {
                   "**/*.aux" = true;
                   "**/*.bbl" = true;
@@ -67,13 +96,23 @@
                 };
 
                 "[latex]" = {
+                  "editor.formatOnSave" = true;
+                  "editor.defaultFormatter" = "James-Yu.latex-workshop";
                   "editor.wordWrap" = "on";
                   "editor.wordWrapColumn" = 100;
+                  "editor.autoClosingBrackets" = "always";
+                  "editor.autoSurround" = "languageDefined";
+                  "editor.suggest.snippetsPreventQuickSuggestions" = false;
                   "editor.quickSuggestions" = {
                     comments = false;
                     other = true;
                     strings = false;
                   };
+                };
+
+                "[bibtex]" = {
+                  "editor.formatOnSave" = true;
+                  "editor.defaultFormatter" = "James-Yu.latex-workshop";
                 };
 
                 "cSpell.language" = "en";
